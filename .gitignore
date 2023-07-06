@@ -1,0 +1,13 @@
+
+# local files
+.local/
+
+# vs code
+.vscode/
+*.code-workspace
+
+# objects
+source/quakegeneric
+
+# game data
+source/id1/
