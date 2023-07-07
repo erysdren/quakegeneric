@@ -2,14 +2,15 @@
 
 it's like [doomgeneric](https://github.com/ozkl/doomgeneric), but for quake. it's based on the GPL WinQuake source code.
 
-currently only works in 32-bit mode.
-
 see [`quakegeneric_sdl2.c`](./source/quakegeneric_sdl2.c) for an example implementation.
 
-## todo
+## platforms
 
-- fix 64-bit compatibility
-- remove platform-specific cruft
+the following compilers have been tested to work with this source:
+
+- GCC
+- Clang
+- TinyCC
 
 ## License
 
