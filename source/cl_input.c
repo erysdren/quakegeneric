@@ -316,10 +316,6 @@ void CL_BaseMove (usercmd_t *cmd)
 		cmd->sidemove *= cl_movespeedkey.value;
 		cmd->upmove *= cl_movespeedkey.value;
 	}
-
-#ifdef QUAKE2
-	cmd->lightlevel = cl.light_level;
-#endif
 }
 
 
@@ -373,13 +369,6 @@ void CL_SendMove (usercmd_t *cmd)
 
     MSG_WriteByte (&buf, in_impulse);
 	in_impulse = 0;
-
-#ifdef QUAKE2
-//
-// light level
-//
-	MSG_WriteByte (&buf, cmd->lightlevel);
-#endif
 
 //
 // deliver the message

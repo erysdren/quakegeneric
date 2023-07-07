@@ -116,24 +116,7 @@ void R_AddDynamicLights (void)
 				else
 					dist = td + (sd>>1);
 				if (dist < minlight)
-#ifdef QUAKE2
-				{
-					unsigned temp;
-					temp = (rad - dist)*256;
-					i = t*smax + s;
-					if (!cl_dlights[lnum].dark)
-						blocklights[i] += temp;
-					else
-					{
-						if (blocklights[i] > temp)
-							blocklights[i] -= temp;
-						else
-							blocklights[i] = 0;
-					}
-				}
-#else
 					blocklights[t*smax + s] += (rad - dist)*256;
-#endif
 			}
 		}
 	}

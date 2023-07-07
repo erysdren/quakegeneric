@@ -394,9 +394,6 @@ void SV_MoveToGoal (void)
 {
 	edict_t		*ent, *goal;
 	float		dist;
-#ifdef QUAKE2
-	edict_t		*enemy;
-#endif
 
 	ent = PROG_TO_EDICT(pr_global_struct->self);
 	goal = PROG_TO_EDICT(ent->v.goalentity);
@@ -409,12 +406,7 @@ void SV_MoveToGoal (void)
 	}
 
 // if the next step hits the enemy, return immediately
-#ifdef QUAKE2
-	enemy = PROG_TO_EDICT(ent->v.enemy);
-	if (enemy != sv.edicts &&  SV_CloseEnough (ent, enemy, dist) )
-#else
 	if ( PROG_TO_EDICT(ent->v.enemy) != sv.edicts &&  SV_CloseEnough (ent, goal, dist) )
-#endif
 		return;
 
 // bump around...
