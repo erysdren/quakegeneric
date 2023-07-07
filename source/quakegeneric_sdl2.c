@@ -39,6 +39,7 @@ static int keybuffer_start;  // index of next item to be read
 
 static int mouse_x, mouse_y;
 
+
 void QG_Init(void)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
@@ -52,6 +53,28 @@ void QG_Init(void)
 	keybuffer_len = 0;
 	keybuffer_start = 0;
 	mouse_x = mouse_y = 0;
+}
+
+static int ConvertToQuakeButton(unsigned char button)
+{
+	int qbutton;
+
+	switch (button)
+	{
+		case 1:
+			qbutton = K_MOUSE1;
+			break;
+		case 2:
+			qbutton = K_MOUSE3;
+			break;
+		case 3:
+			qbutton = K_MOUSE2;
+			break;
+		default:
+			qbutton = -1;
+			break;
+	}
+	return qbutton;
 }
 
 static int ConvertToQuakeKey(unsigned int key)
@@ -162,11 +185,8 @@ static int ConvertToQuakeKey(unsigned int key)
 
 		/*
 		 * Not yet converted:
-		 *   K_MOUSE*
 		 *   K_JOY*
 		 *   K_AUX*
-		 *   K_MWHEELUP
-		 *   K_MWHEELDOWN
 		 */
 	}
 
@@ -290,6 +310,7 @@ int main(int argc, char *argv[])
 {
 	double oldtime, newtime;
 	int running = 1;
+	int button;
 
 	QG_Create(argc, argv);
 
@@ -312,6 +333,25 @@ int main(int argc, char *argv[])
 				case SDL_MOUSEMOTION:
 					mouse_x += event.motion.xrel;
 					mouse_y += event.motion.yrel;
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+				case SDL_MOUSEBUTTONUP:
+					button = ConvertToQuakeButton(event.button.button);
+					if (button != -1) {
+						(void) KeyPush((event.type == SDL_MOUSEBUTTONDOWN), button);
+					}
+					break;
+				case SDL_MOUSEWHEEL:
+					if (event.wheel.y > 0)
+					{
+						(void) KeyPush(1, K_MWHEELUP);
+						(void) KeyPush(0, K_MWHEELUP);
+					}
+					else if (event.wheel.y < 0)
+					{
+						(void) KeyPush(1, K_MWHEELDOWN);
+						(void) KeyPush(0, K_MWHEELDOWN);
+					}
 					break;
 			}
 		}
