@@ -11,3 +11,14 @@ source/quakegeneric
 
 # game data
 source/id1/
+
+# object files
+*.o
+
+# vim
+*.swp
+
+# cscope
+cscope.in.out
+cscope.out
+cscope.po.out
