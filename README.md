@@ -10,6 +10,7 @@ the following compilers have been tested to work with this source:
 
 - GCC
 - Clang
+- MinGW
 - TinyCC
 
 ## License
