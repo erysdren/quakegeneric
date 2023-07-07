@@ -16,6 +16,9 @@ source/id1/
 *.o
 *.exe
 *.a
+*.obj
+*.rsp
+*.err
 
 # vim
 *.swp

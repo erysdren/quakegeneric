@@ -1,34 +1,4 @@
-# quakegeneric
-
-![a low-resolution screenshot of quake](./.github/quakegeneric.png)
-
-it's like [doomgeneric](https://github.com/ozkl/doomgeneric), but for quake. it's based on the GPL WinQuake source code.
-
-currently it can only compile for 32-bit architechtures.
-
-see [`quakegeneric_sdl2.c`](./source/quakegeneric_sdl2.c) for an example implementation.
-
-## compiling
-
-on unix-like platforms:
-
-```
-cd source/
-make
-```
-
-## platforms
-
-the following compilers have been tested to work with this source:
-
-- GCC
-- Clang
-- MinGW
-- TinyCC
-- Open Watcom
-
-## License
-
+/*
 Copyright (C) 1996-1997 Id Software, Inc.
 
 This program is free software; you can redistribute it and/or
@@ -45,3 +15,32 @@ See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+*/
+
+#include "quakegeneric.h"
+
+void QG_Init(void)
+{
+
+}
+
+int QG_GetKey(int *down, int *key)
+{
+	return 0;
+}
+
+void QG_Quit(void)
+{
+
+}
+
+void QG_DrawFrame(void *pixels, void *palette)
+{
+
+}
+
+int main(int argc, char *argv[])
+{
+	return 0;
+}
