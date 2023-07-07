@@ -41,7 +41,7 @@ void QG_Init(void)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	window = SDL_CreateWindow("Quake", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, QUAKEGENERIC_RES_X, QUAKEGENERIC_RES_Y, SDL_WINDOW_SHOWN);
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE | SDL_RENDERER_PRESENTVSYNC);
 	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, QUAKEGENERIC_RES_X, QUAKEGENERIC_RES_Y);
 	rgbpixels = malloc(QUAKEGENERIC_RES_X * QUAKEGENERIC_RES_Y * sizeof(uint32_t));
 }
@@ -229,9 +229,6 @@ int main(int argc, char *argv[])
 
 	while (running)
 	{
-		// get start of frame
-		Uint64 start = SDL_GetPerformanceCounter();
-
 		// poll events
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
@@ -249,11 +246,6 @@ int main(int argc, char *argv[])
 		}
 
 		QG_Tick();
-
-		// wait for frametime
-		Uint64 end = SDL_GetPerformanceCounter();
-		float elapsed = (end - start) / (float)SDL_GetPerformanceFrequency() * 1000.0f;
-		SDL_Delay(floor(66.66666666666667 - elapsed));
 	}
 
 	return 0;
