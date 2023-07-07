@@ -229,12 +229,6 @@ void R_Init (void)
 
 	R_InitParticles ();
 
-// TODO: collect 386-specific code in one place
-#if	id386
-	Sys_MakeCodeWriteable ((long)R_EdgeCodeStart,
-					     (long)R_EdgeCodeEnd - (long)R_EdgeCodeStart);
-#endif	// id386
-
 	D_Init ();
 }
 
@@ -460,24 +454,6 @@ void R_ViewChanged (vrect_t *pvrect, int lineadj, float aspect)
 		r_fov_greater_than_90 = false;
 	else
 		r_fov_greater_than_90 = true;
-
-// TODO: collect 386-specific code in one place
-#if	id386
-	if (r_pixbytes == 1)
-	{
-		Sys_MakeCodeWriteable ((long)R_Surf8Start,
-						     (long)R_Surf8End - (long)R_Surf8Start);
-		colormap = vid.colormap;
-		R_Surf8Patch ();
-	}
-	else
-	{
-		Sys_MakeCodeWriteable ((long)R_Surf16Start,
-						     (long)R_Surf16End - (long)R_Surf16Start);
-		colormap = vid.colormap16;
-		R_Surf16Patch ();
-	}
-#endif	// id386
 
 	D_ViewChanged ();
 }

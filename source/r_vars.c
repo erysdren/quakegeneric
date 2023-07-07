@@ -21,8 +21,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include	"quakedef.h"
 
-#if	!id386
-
 // all global and static refresh variables are collected in a contiguous block
 // to avoid cache conflicts.
 
@@ -34,6 +32,3 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // FIXME: do separately for refresh engine and driver
 
 int	r_bmodelactive;
-
-#endif	// !id386
-
