@@ -89,7 +89,7 @@ OBJECTS_SDL2 = \
 all: libquakegeneric.a quakegeneric
 
 clean:
-	$(RM) *.o *.obj *.rsp *.err *.exe quakegeneric
+	$(RM) *.a *.o *.obj *.rsp *.err *.exe quakegeneric
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) -o $@ $<

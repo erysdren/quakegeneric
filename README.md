@@ -6,7 +6,10 @@ it's like [doomgeneric](https://github.com/ozkl/doomgeneric), but for quake. it'
 
 currently it can only compile for 32-bit architechtures.
 
-see [`quakegeneric_sdl2.c`](./source/quakegeneric_sdl2.c) for an example implementation.
+## implementations
+
+- [`quakegeneric_null.c`](./source/quakegeneric_null.c) - boilerplate
+- [`quakegeneric_sdl2.c`](./source/quakegeneric_sdl2.c) - SDL2
 
 ## compiling
 
@@ -16,6 +19,14 @@ on unix-like platforms:
 cd source/
 make
 ```
+
+for Open Watcom:
+
+```
+cd source/
+wmake -f makefile.wat
+```
+
 
 ## platforms
 
