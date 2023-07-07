@@ -1,85 +1,87 @@
-
 CC ?= gcc
 RM ?= rm -f
 
-CFLAGS += -g3 -m32 -Dstricmp=strcasecmp -std=gnu99 -lm
+CFLAGS += -g3 -m32 -Dstricmp=strcasecmp -std=gnu99 $(shell sdl2-config --cflags)
+LDFLAGS += -lm -m32 $(shell sdl2-config --libs)
 
-SDL2 = quakegeneric_sdl2.c $(shell sdl2-config --libs --cflags)
+OBJECTS = \
+	cd_null.o \
+	chase.o \
+	cl_demo.o \
+	cl_input.o \
+	cl_main.o \
+	cl_parse.o \
+	cl_tent.o \
+	cmd.o \
+	common.o \
+	console.o \
+	crc.o \
+	cvar.o \
+	d_edge.o \
+	d_fill.o \
+	d_init.o \
+	d_modech.o \
+	d_part.o \
+	d_polyse.o \
+	d_scan.o \
+	d_sky.o \
+	d_sprite.o \
+	d_surf.o \
+	d_vars.o \
+	d_zpoint.o \
+	draw.o \
+	host_cmd.o \
+	host.o \
+	in_null.o \
+	keys.o \
+	mathlib.o \
+	menu.o \
+	model.o \
+	net_loop.o \
+	net_main.o \
+	net_none.o \
+	net_vcr.o \
+	nonintel.o \
+	pr_cmds.o \
+	pr_edict.o \
+	pr_exec.o \
+	r_aclip.o \
+	r_alias.o \
+	r_bsp.o \
+	r_draw.o \
+	r_edge.o \
+	r_efrag.o \
+	r_light.o \
+	r_main.o \
+	r_misc.o \
+	r_part.o \
+	r_sky.o \
+	r_sprite.o \
+	r_surf.o \
+	r_vars.o \
+	sbar.o \
+	screen.o \
+	snd_null.o \
+	sv_main.o \
+	sv_move.o \
+	sv_phys.o \
+	sv_user.o \
+	sys_null.o \
+	vid_null.o \
+	view.o \
+	wad.o \
+	world.o \
+	zone.o \
+	quakegeneric.o \
+	quakegeneric_sdl2.o
 
-SOURCES = \
-	cd_null.c \
-	chase.c \
-	cl_demo.c \
-	cl_input.c \
-	cl_main.c \
-	cl_parse.c \
-	cl_tent.c \
-	cmd.c \
-	common.c \
-	console.c \
-	crc.c \
-	cvar.c \
-	d_edge.c \
-	d_fill.c \
-	d_init.c \
-	d_modech.c \
-	d_part.c \
-	d_polyse.c \
-	d_scan.c \
-	d_sky.c \
-	d_sprite.c \
-	d_surf.c \
-	d_vars.c \
-	d_zpoint.c \
-	draw.c \
-	host_cmd.c \
-	host.c \
-	in_null.c \
-	keys.c \
-	mathlib.c \
-	menu.c \
-	model.c \
-	net_loop.c \
-	net_main.c \
-	net_none.c \
-	net_vcr.c \
-	nonintel.c \
-	pr_cmds.c \
-	pr_edict.c \
-	pr_exec.c \
-	r_aclip.c \
-	r_alias.c \
-	r_bsp.c \
-	r_draw.c \
-	r_edge.c \
-	r_efrag.c \
-	r_light.c \
-	r_main.c \
-	r_misc.c \
-	r_part.c \
-	r_sky.c \
-	r_sprite.c \
-	r_surf.c \
-	r_vars.c \
-	sbar.c \
-	screen.c \
-	snd_null.c \
-	sv_main.c \
-	sv_move.c \
-	sv_phys.c \
-	sv_user.c \
-	sys_null.c \
-	vid_null.c \
-	view.c \
-	wad.c \
-	world.c \
-	zone.c \
-	quakegeneric.c \
-
-all: clean quakegeneric
+all: quakegeneric
 
 clean:
 	$(RM) *.o quakegeneric
 
-quakegeneric: $(SOURCES)
-	$(CC) -o quakegeneric $(SOURCES) $(SDL2) $(CFLAGS)
+%.o:	%.c
+	$(CC) -c $(CFLAGS) -o $@ $<
+
+quakegeneric: $(OBJECTS)
+	$(CC) -o $@ $(OBJECTS) $(LDFLAGS)
