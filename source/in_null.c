@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakedef.h"
 
+#include "quakegeneric.h"
+
 void IN_Init (void)
 {
 }
@@ -31,9 +33,16 @@ void IN_Shutdown (void)
 
 void IN_Commands (void)
 {
+	int down;
+	int key;
+
+	while (QG_GetKey(&down, &key)) {
+		Key_Event(key, down);
+	}
 }
 
 void IN_Move (usercmd_t *cmd)
 {
+	// TODO: Modify `cmd` with things like mouse / joystick input.
 }
 

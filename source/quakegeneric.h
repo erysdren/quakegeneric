@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "quakekeys.h"
+
 #define QUAKEGENERIC_RES_X 320
 #define QUAKEGENERIC_RES_Y 200
 
@@ -29,3 +31,4 @@ void QG_Create(int argc, char *argv[]);
 void QG_Init(void);
 void QG_Quit(void);
 void QG_DrawFrame(void *pixels, void *palette);
+int QG_GetKey(int *down, int *key);
