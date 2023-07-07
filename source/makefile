@@ -1,4 +1,5 @@
 CC ?= gcc
+AR ?= ar
 RM ?= rm -f
 
 ifeq ($(CC), tcc)
@@ -80,16 +81,21 @@ OBJECTS = \
 	wad.o \
 	world.o \
 	zone.o \
-	quakegeneric.o \
+	quakegeneric.o
+
+OBJECTS_SDL2 = \
 	quakegeneric_sdl2.o
 
-all: quakegeneric
+all: libquakegeneric.a quakegeneric
 
 clean:
 	$(RM) *.o *.exe quakegeneric
 
-%.o:	%.c
+%.o: %.c
 	$(CC) -c $(CFLAGS) -o $@ $<
 
-quakegeneric: $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS) $(LDFLAGS)
+quakegeneric: $(OBJECTS) $(OBJECTS_SDL2)
+	$(CC) -o $@ $(OBJECTS) $(OBJECTS_SDL2) $(LDFLAGS)
+
+libquakegeneric.a: $(OBJECTS)
+	$(AR) rcs $@ $(OBJECTS)

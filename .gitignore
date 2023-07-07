@@ -15,6 +15,7 @@ source/id1/
 # object files
 *.o
 *.exe
+*.a
 
 # vim
 *.swp
