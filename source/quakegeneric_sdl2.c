@@ -37,6 +37,7 @@ static int keybuffer[KEYBUFFERSIZE];  // circular key buffer
 static int keybuffer_len;  // number of keys in the buffer
 static int keybuffer_start;  // index of next item to be read
 
+static int mouse_x, mouse_y;
 
 void QG_Init(void)
 {
@@ -45,6 +46,12 @@ void QG_Init(void)
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE | SDL_RENDERER_PRESENTVSYNC);
 	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, QUAKEGENERIC_RES_X, QUAKEGENERIC_RES_Y);
 	rgbpixels = malloc(QUAKEGENERIC_RES_X * QUAKEGENERIC_RES_Y * sizeof(uint32_t));
+
+	SDL_SetRelativeMouseMode(SDL_TRUE);
+
+	keybuffer_len = 0;
+	keybuffer_start = 0;
+	mouse_x = mouse_y = 0;
 }
 
 static int ConvertToQuakeKey(unsigned int key)
@@ -196,6 +203,14 @@ int QG_GetKey(int *down, int *key)
 	return KeyPop(down, key);
 }
 
+void QG_GetMouseMove(int *x, int *y)
+{
+	*x = mouse_x;
+	*y = mouse_y;
+
+	mouse_x = mouse_y = 0;
+}
+
 void QG_Quit(void)
 {
 	if (window) SDL_DestroyWindow(window);
@@ -293,6 +308,10 @@ int main(int argc, char *argv[])
 				case SDL_KEYDOWN:
 				case SDL_KEYUP:
 					(void) KeyPush((event.type == SDL_KEYDOWN), ConvertToQuakeKey(event.key.keysym.sym));
+					break;
+				case SDL_MOUSEMOTION:
+					mouse_x += event.motion.xrel;
+					mouse_y += event.motion.yrel;
 					break;
 			}
 		}
