@@ -9,7 +9,7 @@ ifdef DEBUG
 override CFLAGS += -g3
 endif
 
-override CFLAGS += -m32 -Dstricmp=strcasecmp -std=gnu99 $(shell sdl2-config --cflags)
+override CFLAGS += -m32 -std=gnu99 $(shell sdl2-config --cflags)
 override LDFLAGS += -lm -m32 $(shell sdl2-config --libs)
 
 OBJECTS = \
@@ -86,7 +86,7 @@ OBJECTS = \
 all: quakegeneric
 
 clean:
-	$(RM) *.o quakegeneric
+	$(RM) *.o *.exe quakegeneric
 
 %.o:	%.c
 	$(CC) -c $(CFLAGS) -o $@ $<
