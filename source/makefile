@@ -1,8 +1,12 @@
 CC ?= gcc
 RM ?= rm -f
 
-CFLAGS += -g3 -m32 -Dstricmp=strcasecmp -std=gnu99 $(shell sdl2-config --cflags)
-LDFLAGS += -lm -m32 $(shell sdl2-config --libs)
+ifeq ($(CC), tcc)
+override CFLAGS += -DSDL_DISABLE_IMMINTRIN_H=1
+endif
+
+override CFLAGS += -g3 -m32 -Dstricmp=strcasecmp -std=gnu99 $(shell sdl2-config --cflags)
+override LDFLAGS += -lm -m32 $(shell sdl2-config --libs)
 
 OBJECTS = \
 	cd_null.o \
