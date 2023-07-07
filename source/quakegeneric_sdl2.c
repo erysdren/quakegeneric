@@ -223,10 +223,12 @@ void QG_DrawFrame(void *pixels, void *palette)
 
 int main(int argc, char *argv[])
 {
+	double oldtime, newtime;
 	int running = 1;
 
 	QG_Create(argc, argv);
 
+	oldtime = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency() - 0.1;
 	while (running)
 	{
 		// poll events
@@ -245,7 +247,10 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		QG_Tick();
+		// Run the frame at the correct duration.
+		newtime = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
+		QG_Tick(newtime - oldtime);
+		oldtime = newtime;
 	}
 
 	return 0;
