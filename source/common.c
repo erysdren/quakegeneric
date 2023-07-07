@@ -1023,9 +1023,6 @@ void COM_CheckRegistered (void)
 
 	if (h == -1)
 	{
-#if WINDED
-	Sys_Error ("This dedicated server requires a full registered copy of Quake");
-#endif
 		Con_Printf ("Playing shareware version.\n");
 		if (com_modified)
 			Sys_Error ("You must have the registered version to use modified games");
