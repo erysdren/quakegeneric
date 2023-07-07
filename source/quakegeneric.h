@@ -33,7 +33,8 @@ void QG_Create(int argc, char *argv[]);
 // user must implement these
 void QG_Init(void);
 void QG_Quit(void);
-void QG_DrawFrame(void *pixels, void *palette);
+void QG_DrawFrame(void *pixels);
+void QG_SetPalette(unsigned char palette[768]);
 int QG_GetKey(int *down, int *key);
 
 #endif // __QUAKEGENERIC__

@@ -35,7 +35,12 @@ void QG_Quit(void)
 
 }
 
-void QG_DrawFrame(void *pixels, void *palette)
+void QG_DrawFrame(void *pixels)
+{
+
+}
+
+void QG_SetPalette(unsigned char palette[768])
 {
 
 }

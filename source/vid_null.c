@@ -33,19 +33,19 @@ byte	vid_buffer[BASEWIDTH*BASEHEIGHT];
 short	zbuffer[BASEWIDTH*BASEHEIGHT];
 byte	surfcache[256*1024];
 
-byte	vid_palette[256 * 3];
-
 unsigned short	d_8to16table[256];
 unsigned	d_8to24table[256];
 
 void	VID_SetPalette (unsigned char *palette)
 {
-	memcpy(vid_palette, palette, 256 * 3);
+	// quake generic
+	QG_SetPalette(palette);
 }
 
 void	VID_ShiftPalette (unsigned char *palette)
 {
-	memcpy(vid_palette, palette, 256 * 3);
+	// quake generic
+	QG_SetPalette(palette);
 }
 
 void	VID_Init (unsigned char *palette)
@@ -73,7 +73,7 @@ void	VID_Shutdown (void)
 void	VID_Update (vrect_t *rects)
 {
 	// quake generic
-	QG_DrawFrame(vid.buffer, vid_palette);
+	QG_DrawFrame(vid.buffer);
 }
 
 /*

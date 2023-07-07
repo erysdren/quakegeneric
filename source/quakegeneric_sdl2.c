@@ -29,6 +29,7 @@ SDL_Window *window;
 SDL_Renderer *renderer;
 SDL_Texture *texture;
 uint32_t *rgbpixels;
+unsigned char pal[768];
 
 #define ARGB(r, g, b, a) (((a) << 24) | ((r) << 16) | ((g) << 8) | (b))
 
@@ -246,7 +247,7 @@ static inline void calc_screen_pos(int x, int y, SDL_Rect *rect)
 	}
 }
 
-void QG_DrawFrame(void *pixels, void *palette)
+void QG_DrawFrame(void *pixels)
 {
 	int x, y;
 	SDL_Rect rect;
@@ -255,7 +256,7 @@ void QG_DrawFrame(void *pixels, void *palette)
 	for (int i = 0; i < QUAKEGENERIC_RES_X * QUAKEGENERIC_RES_Y; i++)
 	{
 		uint8_t pixel = ((uint8_t *)pixels)[i];
-		uint8_t *entry = &((uint8_t *)palette)[pixel * 3];
+		uint8_t *entry = &((uint8_t *)pal)[pixel * 3];
 		rgbpixels[i] = ARGB(*(entry), *(entry + 1), *(entry + 2), 255);
 	}
 
@@ -269,6 +270,11 @@ void QG_DrawFrame(void *pixels, void *palette)
 	SDL_RenderClear(renderer);
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
 	SDL_RenderPresent(renderer);
+}
+
+void QG_SetPalette(unsigned char palette[768])
+{
+	memcpy(pal, palette, 768);
 }
 
 int main(int argc, char *argv[])
