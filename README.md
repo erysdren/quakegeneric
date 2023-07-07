@@ -1,6 +1,10 @@
 # quakegeneric
 
+![a low-resolution screenshot of quake](./.github/quakegeneric.png)
+
 it's like [doomgeneric](https://github.com/ozkl/doomgeneric), but for quake. it's based on the GPL WinQuake source code.
+
+currently it can only compile for 32-bit architechtures.
 
 see [`quakegeneric_sdl2.c`](./source/quakegeneric_sdl2.c) for an example implementation.
 
