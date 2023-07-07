@@ -36,5 +36,6 @@ void QG_Quit(void);
 void QG_DrawFrame(void *pixels);
 void QG_SetPalette(unsigned char palette[768]);
 int QG_GetKey(int *down, int *key);
+void QG_GetMouseMove(int *x, int *y);
 
 #endif // __QUAKEGENERIC__
