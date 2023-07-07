@@ -4,6 +4,15 @@ it's like [doomgeneric](https://github.com/ozkl/doomgeneric), but for quake. it'
 
 see [`quakegeneric_sdl2.c`](./source/quakegeneric_sdl2.c) for an example implementation.
 
+## compiling
+
+on unix-like platforms:
+
+```
+cd source/
+make
+```
+
 ## platforms
 
 the following compilers have been tested to work with this source:
