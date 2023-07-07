@@ -6,8 +6,16 @@ ifeq ($(CC), tcc)
 override CFLAGS += -DSDL_DISABLE_IMMINTRIN_H=1
 endif
 
-ifdef DEBUG
+ifeq ($(DEBUG), 1)
 override CFLAGS += -g3
+endif
+
+ifeq ($(PARANOID), 1)
+override CFLAGS += -fsanitize=address,undefined
+endif
+
+ifeq ($(RELEASE), 1)
+override CFLAGS += -O3
 endif
 
 override CFLAGS += -m32 -std=gnu99 $(shell sdl2-config --cflags)

@@ -27,7 +27,6 @@ cd source/
 wmake -f makefile.wat
 ```
 
-
 ## platforms
 
 the following compilers have been tested to work with this source:
