@@ -27,3 +27,6 @@ source/id1/
 cscope.in.out
 cscope.out
 cscope.po.out
+
+# dosbox-x
+dosbox-x.*

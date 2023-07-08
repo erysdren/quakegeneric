@@ -71,7 +71,7 @@ OBJECTS=&
 	world.o&
 	zone.o&
 	quakegeneric.o&
-	quakegeneric_null.o
+	quakegeneric_dos.o
 
 .c.o:
 	$(CC) $(CFLAGS) $*.c
