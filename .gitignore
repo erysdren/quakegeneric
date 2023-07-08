@@ -30,3 +30,9 @@ cscope.po.out
 
 # dosbox-x
 dosbox-x.*
+
+# cmake
+cmake-build*
+
+# meson
+meson-build*

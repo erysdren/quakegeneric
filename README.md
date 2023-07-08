@@ -11,7 +11,7 @@ currently it can only compile for 32-bit architechtures.
 - [`quakegeneric_null.c`](./source/quakegeneric_null.c) - boilerplate
 - [`quakegeneric_sdl2.c`](./source/quakegeneric_sdl2.c) - SDL2
 
-## compiling
+## building
 
 on unix-like platforms:
 
@@ -25,6 +25,24 @@ for Open Watcom:
 ```
 cd source/
 wmake -f makefile.wat
+```
+
+for CMake:
+
+```
+mkdir cmake-build
+cd cmake-build
+cmake ..
+make
+```
+
+for Meson:
+
+```
+mkdir meson-build
+meson setup meson-build
+cd meson-build
+meson compile
 ```
 
 ## platforms
