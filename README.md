@@ -32,7 +32,7 @@ for CMake:
 
 ```
 mkdir cmake-build
-cd cmake-build
+cd cmake-build/
 cmake ..
 make
 ```
@@ -42,8 +42,15 @@ for Meson:
 ```
 mkdir meson-build
 meson setup meson-build
-cd meson-build
+cd meson-build/
 meson compile
+```
+
+for Windows:
+
+```
+cd source/
+nmake makefile.win
 ```
 
 ## platforms
@@ -55,6 +62,7 @@ the following compilers have been tested to work with this source:
 - MinGW
 - TinyCC
 - Open Watcom
+- MSVC
 
 ## License
 
