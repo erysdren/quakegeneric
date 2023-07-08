@@ -65,7 +65,7 @@ int ConvertToQuakeKey(unsigned int key){
 		case VK_UP:
 			qkey = K_UPARROW;
 			break;
-		case VK_DOWN: 
+		case VK_DOWN:
 			qkey = K_DOWNARROW;
 			break;
 		case VK_LEFT:
@@ -145,7 +145,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
 		}
 
 		case WM_KEYUP:{
-			KeyPush(0, ConvertToQuakeKey((unsigned char)wParam));			
+			KeyPush(0, ConvertToQuakeKey((unsigned char)wParam));
 			break;
 		}
 
@@ -252,7 +252,7 @@ void QG_Init(){
 
 	globalHdc = GetDC(hwnd);
 	hdc_bmp = CreateCompatibleDC(globalHdc);
-}	
+}
 
 int QG_GetKey(int* down, int *key){
 	return KeyPop(down, key);
@@ -291,7 +291,7 @@ void QG_DrawFrame(void* pixels, void* palette){
 	memcpy(frontbuffer, pixels, 64000);
 	InvalidateRect(hwnd, NULL, 0);
 }
-	
+
 int main(int argc, char** argv){
 	MSG Msg;
 	double oldtime, newtime;
