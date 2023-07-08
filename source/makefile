@@ -17,6 +17,7 @@ endif
 
 ifeq ($(RELEASE), 1)
 override CFLAGS += -O3
+override LDFLAGS += -O3
 endif
 
 override CFLAGS += -m32 -std=gnu99 $(shell sdl2-config --cflags)
