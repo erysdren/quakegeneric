@@ -11,7 +11,8 @@ override CFLAGS += -g3
 endif
 
 ifeq ($(PARANOID), 1)
-override CFLAGS += -fsanitize=address,undefined
+override CFLAGS += -fsanitize=address,undefined -Wall -Wextra -pedantic
+override LDFLAGS += -fsanitize=address,undefined
 endif
 
 ifeq ($(RELEASE), 1)
