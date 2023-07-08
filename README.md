@@ -8,9 +8,10 @@ currently it can only compile for 32-bit architechtures.
 
 ## implementations
 
-- [`quakegeneric_null.c`](./source/quakegeneric_null.c) - boilerplate
+- [`quakegeneric_null.c`](./source/quakegeneric_null.c) - null
 - [`quakegeneric_dos.c`](./source/quakegeneric_dos.c) - MS-DOS
 - [`quakegeneric_sdl2.c`](./source/quakegeneric_sdl2.c) - SDL2
+- [`quakegeneric_w32.c`](./source/quakegeneric_w32.c) - Win32
 
 ## building
 
