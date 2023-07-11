@@ -290,7 +290,7 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 //
 // allocate a new model
 //
-	COM_FileBase (mod->name, loadname);
+	COM_FileBase (mod->name, loadname, 32);
 	
 	loadmodel = mod;
 

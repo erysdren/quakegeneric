@@ -853,25 +853,33 @@ char *COM_FileExtension (char *in)
 COM_FileBase
 ============
 */
-void COM_FileBase (char *in, char *out)
+void COM_FileBase (char *in, char *out, size_t outsize)
 {
-	char *s, *s2;
-	
-	s = in + strlen(in) - 1;
-	
-	while (s != in && *s != '.')
-		s--;
-	
-	for (s2 = s ; *s2 && *s2 != '/' ; s2--)
-	;
-	
-	if (s-s2 < 2)
-		strcpy (out,"?model?");
+	const char	*dot, *slash, *s;
+
+	s = in;
+	slash = in;
+	dot = NULL;
+	while (*s)
+	{
+		if (*s == '/')
+			slash = s + 1;
+		if (*s == '.')
+			dot = s;
+		s++;
+	}
+	if (dot == NULL)
+		dot = s;
+
+	if (dot - slash < 2)
+		strncpy (out, "?model?", outsize);
 	else
 	{
-		s--;
-		strncpy (out,s2+1, s-s2);
-		out[s-s2] = 0;
+		size_t	len = dot - slash;
+		if (len >= outsize)
+			len = outsize - 1;
+		memcpy (out, slash, len);
+		out[len] = '\0';
 	}
 }
 
@@ -1535,7 +1543,7 @@ byte *COM_LoadFile (char *path, int usehunk)
 		return NULL;
 	
 // extract the filename base name for hunk tag
-	COM_FileBase (path, base);
+	COM_FileBase (path, base, 32);
 	
 	if (usehunk == 1)
 		buf = Hunk_AllocName (len+1, base);

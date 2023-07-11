@@ -153,7 +153,7 @@ void COM_InitArgv (int argc, char **argv);
 
 char *COM_SkipPath (char *pathname);
 void COM_StripExtension (char *in, char *out);
-void COM_FileBase (char *in, char *out);
+void COM_FileBase (char *in, char *out, size_t outsize);
 void COM_DefaultExtension (char *path, char *extension);
 
 char	*va(char *format, ...);
