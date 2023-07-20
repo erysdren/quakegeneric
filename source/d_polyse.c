@@ -127,7 +127,7 @@ void D_PolysetDraw (void)
 						// one extra because of cache line pretouching
 
 	a_spans = (spanpackage_t *)
-			(((long)&spans[0] + CACHE_SIZE - 1) & ~(CACHE_SIZE - 1));
+			(((intptr_t)&spans[0] + CACHE_SIZE - 1) & ~(CACHE_SIZE - 1));
 
 	if (r_affinetridesc.drawtype)
 	{
