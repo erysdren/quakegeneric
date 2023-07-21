@@ -378,6 +378,12 @@ int main(int argc, char *argv[])
 						joy_axes[event.jaxis.axis] = event.jaxis.value / 32767.0f;
 					}
 					break;
+
+				case SDL_JOYBUTTONDOWN:
+				case SDL_JOYBUTTONUP:
+					button = event.jbutton.button + ((event.jbutton.button < 4) ? K_JOY1 : K_AUX1);
+					(void) KeyPush((event.type == SDL_JOYBUTTONDOWN), button);
+					break;
 			}
 		}
 
