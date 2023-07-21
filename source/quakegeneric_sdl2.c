@@ -39,7 +39,8 @@ static int keybuffer_len;  // number of keys in the buffer
 static int keybuffer_start;  // index of next item to be read
 
 static int mouse_x, mouse_y;
-
+static float joy_axes[QUAKEGENERIC_JOY_MAX_AXES];
+static SDL_Joystick *joystick;
 
 void QG_Init(void)
 {
@@ -54,6 +55,13 @@ void QG_Init(void)
 	keybuffer_len = 0;
 	keybuffer_start = 0;
 	mouse_x = mouse_y = 0;
+	memset(joy_axes, 0, sizeof(joy_axes));
+
+    if (SDL_NumJoysticks() != 0) {
+		joystick = SDL_JoystickOpen(0);
+	} else {
+		joystick = NULL;
+	}
 }
 
 static int ConvertToQuakeButton(unsigned char button)
@@ -224,6 +232,11 @@ int QG_GetKey(int *down, int *key)
 	return KeyPop(down, key);
 }
 
+void QG_GetJoyAxes(float *axes)
+{
+	memcpy(axes, joy_axes, sizeof(joy_axes));
+}
+
 void QG_GetMouseMove(int *x, int *y)
 {
 	*x = mouse_x;
@@ -238,6 +251,7 @@ void QG_Quit(void)
 	if (renderer) SDL_DestroyRenderer(renderer);
 	if (texture) SDL_DestroyTexture(texture);
 	if (rgbpixels) free(rgbpixels);
+	if (joystick != NULL) SDL_JoystickClose(joystick);
 	SDL_Quit();
 }
 
@@ -357,6 +371,11 @@ int main(int argc, char *argv[])
 					{
 						(void) KeyPush(1, K_MWHEELDOWN);
 						(void) KeyPush(0, K_MWHEELDOWN);
+					}
+					break;
+				case SDL_JOYAXISMOTION:
+					if (event.jaxis.axis < QUAKEGENERIC_JOY_MAX_AXES) {
+						joy_axes[event.jaxis.axis] = event.jaxis.value / 32767.0f;
 					}
 					break;
 			}

@@ -26,6 +26,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define QUAKEGENERIC_RES_X 320
 #define QUAKEGENERIC_RES_Y 200
 
+#define QUAKEGENERIC_JOY_MAX_AXES 6
+#define QUAKEGENERIC_JOY_AXIS_X 0
+#define QUAKEGENERIC_JOY_AXIS_Y 1
+#define QUAKEGENERIC_JOY_AXIS_Z 2
+#define QUAKEGENERIC_JOY_AXIS_R 3
+#define QUAKEGENERIC_JOY_AXIS_U 4
+#define QUAKEGENERIC_JOY_AXIS_V 5
+
+
 // provided functions
 void QG_Tick(double duration);
 void QG_Create(int argc, char *argv[]);
@@ -37,5 +46,6 @@ void QG_DrawFrame(void *pixels);
 void QG_SetPalette(unsigned char palette[768]);
 int QG_GetKey(int *down, int *key);
 void QG_GetMouseMove(int *x, int *y);
+void QG_GetJoyAxes(float *axes);
 
 #endif // __QUAKEGENERIC__
