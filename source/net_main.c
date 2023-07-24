@@ -449,9 +449,9 @@ NET_CheckNewConnections
 
 struct
 {
-	double	time;
-	int		op;
-	long	session;
+	double		time;
+	int			op;
+	intptr_t	session;
 } vcrConnect;
 
 qsocket_t *NET_CheckNewConnections (void)
@@ -473,7 +473,7 @@ qsocket_t *NET_CheckNewConnections (void)
 			{
 				vcrConnect.time = host_time;
 				vcrConnect.op = VCR_OP_CONNECT;
-				vcrConnect.session = (long)ret;
+				vcrConnect.session = (intptr_t)ret;
 				Sys_FileWrite (vcrFile, &vcrConnect, sizeof(vcrConnect));
 				Sys_FileWrite (vcrFile, ret->address, NET_NAMELEN);
 			}
@@ -528,11 +528,11 @@ returns -1 if connection is invalid
 
 struct
 {
-	double	time;
-	int		op;
-	long	session;
-	int		ret;
-	int		len;
+	double		time;
+	int			op;
+	intptr_t	session;
+	int			ret;
+	int			len;
 } vcrGetMessage;
 
 extern void PrintStats(qsocket_t *s);
@@ -580,7 +580,7 @@ int	NET_GetMessage (qsocket_t *sock)
 		{
 			vcrGetMessage.time = host_time;
 			vcrGetMessage.op = VCR_OP_GETMESSAGE;
-			vcrGetMessage.session = (long)sock;
+			vcrGetMessage.session = (intptr_t)sock;
 			vcrGetMessage.ret = ret;
 			vcrGetMessage.len = net_message.cursize;
 			Sys_FileWrite (vcrFile, &vcrGetMessage, 24);
@@ -593,7 +593,7 @@ int	NET_GetMessage (qsocket_t *sock)
 		{
 			vcrGetMessage.time = host_time;
 			vcrGetMessage.op = VCR_OP_GETMESSAGE;
-			vcrGetMessage.session = (long)sock;
+			vcrGetMessage.session = (intptr_t)sock;
 			vcrGetMessage.ret = ret;
 			Sys_FileWrite (vcrFile, &vcrGetMessage, 20);
 		}
@@ -616,10 +616,10 @@ returns -1 if the connection died
 */
 struct
 {
-	double	time;
-	int		op;
-	long	session;
-	int		r;
+	double		time;
+	int			op;
+	intptr_t	session;
+	int			r;
 } vcrSendMessage;
 
 int NET_SendMessage (qsocket_t *sock, sizebuf_t *data)
@@ -644,7 +644,7 @@ int NET_SendMessage (qsocket_t *sock, sizebuf_t *data)
 	{
 		vcrSendMessage.time = host_time;
 		vcrSendMessage.op = VCR_OP_SENDMESSAGE;
-		vcrSendMessage.session = (long)sock;
+		vcrSendMessage.session = (intptr_t)sock;
 		vcrSendMessage.r = r;
 		Sys_FileWrite (vcrFile, &vcrSendMessage, 20);
 	}
@@ -675,7 +675,7 @@ int NET_SendUnreliableMessage (qsocket_t *sock, sizebuf_t *data)
 	{
 		vcrSendMessage.time = host_time;
 		vcrSendMessage.op = VCR_OP_SENDMESSAGE;
-		vcrSendMessage.session = (long)sock;
+		vcrSendMessage.session = (intptr_t)sock;
 		vcrSendMessage.r = r;
 		Sys_FileWrite (vcrFile, &vcrSendMessage, 20);
 	}
@@ -710,7 +710,7 @@ qboolean NET_CanSendMessage (qsocket_t *sock)
 	{
 		vcrSendMessage.time = host_time;
 		vcrSendMessage.op = VCR_OP_CANSENDMESSAGE;
-		vcrSendMessage.session = (long)sock;
+		vcrSendMessage.session = (intptr_t)sock;
 		vcrSendMessage.r = r;
 		Sys_FileWrite (vcrFile, &vcrSendMessage, 20);
 	}

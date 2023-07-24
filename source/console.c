@@ -22,7 +22,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifdef NeXT
 #include <libc.h>
 #endif
-#ifndef _MSC_VER
+#ifdef _MSC_VER
+#include <io.h> // open, write, close
+#else
 #include <unistd.h>
 #endif
 #include <fcntl.h>
