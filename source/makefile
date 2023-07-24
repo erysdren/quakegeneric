@@ -20,8 +20,8 @@ override CFLAGS += -O3
 override LDFLAGS += -O3
 endif
 
-override CFLAGS += -std=gnu99 $(shell sdl2-config --cflags)
-override LDFLAGS += -lm $(shell sdl2-config --libs)
+override CFLAGS += -m32 -std=gnu99 $(shell sdl2-config --cflags)
+override LDFLAGS += -m32 -lm $(shell sdl2-config --libs)
 
 OBJECTS = \
 	cd_null.o \
