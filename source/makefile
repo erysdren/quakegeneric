@@ -70,7 +70,7 @@ $(elf): $(obj)
 
 .PHONY: clean
 clean:
-	rm -f $(obj) $(bin) boot.img floppy.img link.map
+	rm -f $(obj) $(bin) $(elf) boot.img floppy.img link.map pcboot.iso
 
 .PHONY: cleandep
 cleandep:
