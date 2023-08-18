@@ -62,7 +62,9 @@ void QG_Quit(void)
 
 void QG_DrawFrame(void *pixels)
 {
+	con_clear();
 	memcpy(vidmem, pixels, QUAKEGENERIC_RES_X * QUAKEGENERIC_RES_Y);
+	wait_vsync();
 }
 
 void QG_SetPalette(unsigned char palette[768])
@@ -91,8 +93,6 @@ static void mount_boot_fs(void)
 
 	npart = read_partitions(-1, ptab, sizeof ptab / sizeof *ptab);
 
-	print_partition_table(ptab, npart);
-
 	fs = fs_mount(-1, ptab[0].start_sect, ptab[0].size_sect, 0);
 	if (fs == NULL)
 		panic("fs == NULL");
@@ -100,7 +100,7 @@ static void mount_boot_fs(void)
 
 void pcboot_main(void)
 {
-	time_t then, now;
+	unsigned long then, now;
 
 	/* init kernel */
 	init_segm();
@@ -122,13 +122,12 @@ void pcboot_main(void)
 	QG_Create(argc, argv);
 
 	/* main loop*/
-	then = time(NULL);
+	then = nticks;
 	for(;;)
 	{
 		halt_cpu();
-		wait_vsync();
-		now = time(NULL);
-		QG_Tick(now - then);
+		now = nticks;
+		QG_Tick((double)(now - then) / TICK_FREQ_HZ);
 		then = now;
 	}
 }
