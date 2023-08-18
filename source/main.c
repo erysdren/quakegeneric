@@ -34,6 +34,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "dirent.h"
 #include "panic.h"
 #include "unistd.h"
+#include "vbe.h"
+#include "time.h"
 
 #include "quakegeneric.h"
 #include "quakekeys.h"
@@ -41,11 +43,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 static int argc = 1;
 static char *argv[] = {"QuakeOS.bin"};
 
-unsigned char *vidmem = (unsigned char*)0xa0000;
+unsigned char *vidmem = (unsigned char *)0xA0000;
 
 void QG_Init(void)
 {
-
+	set_vga_mode(0x13);
 }
 
 int QG_GetKey(int *down, int *key)
@@ -60,7 +62,7 @@ void QG_Quit(void)
 
 void QG_DrawFrame(void *pixels)
 {
-	memcpy(vidmem, pixels, 320 * 200);
+	memcpy(vidmem, pixels, QUAKEGENERIC_RES_X * QUAKEGENERIC_RES_Y);
 }
 
 void QG_SetPalette(unsigned char palette[768])
@@ -87,13 +89,10 @@ static void mount_boot_fs(void)
 	struct partition ptab[32];
 	struct filesys *fs;
 
-	// get partition table
 	npart = read_partitions(-1, ptab, sizeof ptab / sizeof *ptab);
 
-	// for your health
 	print_partition_table(ptab, npart);
 
-	// mount fs
 	fs = fs_mount(-1, ptab[0].start_sect, ptab[0].size_sect, 0);
 	if (fs == NULL)
 		panic("fs == NULL");
@@ -101,6 +100,8 @@ static void mount_boot_fs(void)
 
 void pcboot_main(void)
 {
+	time_t then, now;
+
 	/* init kernel */
 	init_segm();
 	init_intr();
@@ -114,15 +115,20 @@ void pcboot_main(void)
 	enable_intr();
 	bdev_init();
 
+	/* mount fs */
 	mount_boot_fs();
 
 	/* init quake */
 	QG_Create(argc, argv);
 
 	/* main loop*/
-	while (1)
+	then = time(NULL);
+	for(;;)
 	{
 		halt_cpu();
-		QG_Tick(0.1);
+		wait_vsync();
+		now = time(NULL);
+		QG_Tick(now - then);
+		then = now;
 	}
 }
