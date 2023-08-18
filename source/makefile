@@ -2,7 +2,7 @@ csrc = $(wildcard pcboot/src/*.c) $(wildcard pcboot/src/libc/*.c) $(wildcard pcb
 ssrc = $(wildcard pcboot/src/*.s) $(wildcard pcboot/src/libc/*.s) $(wildcard pcboot/src/boot/*.s) $(wildcard pcboot/src/test/*.s)
 Ssrc = $(wildcard pcboot/src/*.S)
 qsrc = $(wildcard source/*.c)
-obj = $(csrc:.c=.o) $(ssrc:.s=.o) $(Ssrc:.S=.o) $(qsrc:.c=.o)
+obj = $(csrc:.c=.o) $(ssrc:.s=.o) $(Ssrc:.S=.o)
 dep = $(obj:.o=.d)
 elf = test
 bin = test.bin

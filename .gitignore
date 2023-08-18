@@ -21,6 +21,8 @@ source/id1/
 *.err
 *.d
 *.map
+*.bin
+*.img
 
 # vim
 *.swp
