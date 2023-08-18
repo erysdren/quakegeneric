@@ -43,7 +43,7 @@ pcboot.iso: floppy.img
 	rm -rf cdrom
 	git archive --format=tar --prefix=cdrom/ HEAD | tar xf -
 	cp $< cdrom
-	mkisofs -o $@ -R -J -V pcboot -b $< cdrom
+	mkisofs -o $@ -R -J -V pcboot -b $< cdrom game
 
 
 boot.img: bootldr.bin $(bin)
