@@ -304,7 +304,7 @@ void CL_PlayDemo_f (void)
 	cls.state = ca_connected;
 	cls.forcetrack = 0;
 
-	while ((c = getc(cls.demofile)) != '\n')
+	while ((c = fgetc(cls.demofile)) != '\n')
 		if (c == '-')
 			neg = true;
 		else
