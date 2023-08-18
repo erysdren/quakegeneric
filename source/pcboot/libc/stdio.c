@@ -405,3 +405,8 @@ static int readchar(const char *str, FILE *fp)
 	return -1;
 }
 */
+
+int fscanf(FILE *fp, const char *fmt, ...)
+{
+	return 0;
+}
