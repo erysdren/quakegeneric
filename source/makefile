@@ -11,12 +11,12 @@ bin = test.bin
 warn = -pedantic -Wall
 opt = -fno-stack-protector -O2
 dbg = -g
-inc = -Ipcboot -Ipcboot/libc -Ipcboot/test
+inc = -Ipcboot -Ipcboot/libc -Ipcboot/test -Iquake
 gccopt = -fno-pic -ffreestanding -nostdinc -fno-builtin -ffast-math -fcommon
 
 CFLAGS = $(ccarch) -march=i386 $(warn) $(opt) $(dbg) $(gccopt) $(inc) $(def)
 ASFLAGS = $(asarch) -march=i386 $(dbg) -nostdinc -fno-builtin $(inc)
-LDFLAGS = $(ldarch) -nostdlib -T pcboot/pcboot.ld -print-gc-sections
+LDFLAGS = $(ldarch) -nostdlib -T pcboot.ld -print-gc-sections
 
 QEMU_FLAGS = -drive file=floppy.img,format=raw,if=floppy -serial file:serial.log -device sb16
 
