@@ -41,10 +41,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 static int argc = 1;
 static char *argv[] = {"QuakeOS.bin"};
 
+unsigned char *vidmem = (unsigned char*)0xa0000;
+
 void QG_Init(void)
 {
-	/* set video mode */
-	set_vga_mode(0x13);
+
 }
 
 int QG_GetKey(int *down, int *key)
@@ -59,12 +60,15 @@ void QG_Quit(void)
 
 void QG_DrawFrame(void *pixels)
 {
-
+	memcpy(vidmem, pixels, 320 * 200);
 }
 
 void QG_SetPalette(unsigned char palette[768])
 {
-
+	for (int i = 0; i < 256; i++)
+	{
+		set_pal_entry(i, palette[i * 3], palette[i * 3 + 1], palette[i * 3 + 2]);
+	}
 }
 
 void QG_GetMouseMove(int *x, int *y)
@@ -82,11 +86,6 @@ static void mount_boot_fs(void)
 	int npart;
 	struct partition ptab[32];
 	struct filesys *fs;
-	struct fs_node *fsn;
-	struct fs_node *pak;
-
-	// memdisk
-	fs_mount(DEV_MEMDISK, 0, 0, 0);
 
 	// get partition table
 	npart = read_partitions(-1, ptab, sizeof ptab / sizeof *ptab);
@@ -94,19 +93,10 @@ static void mount_boot_fs(void)
 	// for your health
 	print_partition_table(ptab, npart);
 
-	// open fs
-	fsn = fs_open("/", 0);
-	if (fsn == NULL)
-		panic("fsn == NULL");
-
 	// mount fs
-	fs = fs_mount(-1, ptab[0].start_sect, ptab[0].size_sect, fsn);
+	fs = fs_mount(-1, ptab[0].start_sect, ptab[0].size_sect, 0);
 	if (fs == NULL)
 		panic("fs == NULL");
-
-	pak = fs_open("/id1/pak0.pak", 0);
-	if (pak == NULL)
-		panic("pak == NULL");
 }
 
 void pcboot_main(void)
