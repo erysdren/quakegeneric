@@ -23,6 +23,8 @@ source/id1/
 *.map
 *.bin
 *.img
+QuakeOS
+*.log
 
 # vim
 *.swp

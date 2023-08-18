@@ -37,18 +37,6 @@ static char *argv[] = {"QuakeOS.bin"};
 
 void QG_Init(void)
 {
-	/* init kernel */
-	init_segm();
-	init_intr();
-	con_init();
-	kb_init();
-	init_psaux();
-	init_mem();
-	init_pci();
-	init_timer();
-	audio_init();
-	enable_intr();
-
 	/* set video mode */
 	set_vga_mode(0x13);
 }
@@ -85,6 +73,18 @@ void QG_GetJoyAxes(float *axes)
 
 void pcboot_main(void)
 {
+	/* init kernel */
+	init_segm();
+	init_intr();
+	con_init();
+	kb_init();
+	init_psaux();
+	init_mem();
+	init_pci();
+	init_timer();
+	audio_init();
+	enable_intr();
+
 	/* init quake */
 	QG_Create(argc, argv);
 

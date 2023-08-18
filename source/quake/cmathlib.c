@@ -1,4 +1,6 @@
 
+#include <stdio.h>
+
 float ceil(float f)
 {
 	int i = (int)f;
@@ -27,3 +29,8 @@ float asin(float a) { return __builtin_asinf(a); }
 float acos(float a) { return __builtin_acosf(a); }
 float atan(float a) { return __builtin_atanf(a); }
 float atan2(float y, float x) { return __builtin_atan2f(y, x); }
+
+int fscanf(FILE *file, const char *format, ...)
+{
+	return 0;
+}
