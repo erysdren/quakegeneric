@@ -19,6 +19,7 @@ source/id1/
 *.obj
 *.rsp
 *.err
+*.d
 
 # vim
 *.swp
