@@ -28,59 +28,70 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "video.h"
 #include "audio.h"
 #include "pci.h"
-#include "vbetest.h"
 
 #include "quakegeneric.h"
 #include "quakekeys.h"
 
-void logohack(void);
+static int argc = 1;
+static char *argv[] = {"QuakeOS.bin"};
 
-void pcboot_main(void)
+void QG_Init(void)
 {
+	/* init kernel */
 	init_segm();
 	init_intr();
-
 	con_init();
 	kb_init();
 	init_psaux();
-
 	init_mem();
-
 	init_pci();
-
-	/* initialize the timer */
 	init_timer();
-
 	audio_init();
-
 	enable_intr();
 
-	printf("PCBoot kernel initialized\n");
+	/* set video mode */
+	set_vga_mode(0x13);
+}
 
-	for(;;) {
-		int c;
+int QG_GetKey(int *down, int *key)
+{
+	return 0;
+}
 
+void QG_Quit(void)
+{
+	set_vga_mode(3);
+}
+
+void QG_DrawFrame(void *pixels)
+{
+
+}
+
+void QG_SetPalette(unsigned char palette[768])
+{
+
+}
+
+void QG_GetMouseMove(int *x, int *y)
+{
+
+}
+
+void QG_GetJoyAxes(float *axes)
+{
+
+}
+
+void pcboot_main(void)
+{
+	/* init quake */
+	QG_Create(argc, argv);
+
+	/* main loop*/
+	while (1)
+	{
 		halt_cpu();
-		while((c = kb_getkey()) >= 0) {
-			switch(c) {
-			case KB_F1:
-				set_vga_mode(0x13);
-				logohack();
-				set_vga_mode(3);
-				break;
-
-			case KB_F2:
-				vbetest();
-				break;
-			}
-			if(isprint(c)) {
-				printf("key: %d '%c'\n", c, (char)c);
-			} else {
-				printf("key: %d\n", c);
-			}
-		}
-		if((nticks % 250) == 0) {
-			con_printf(71, 0, "[%ld]", nticks);
-		}
+		QG_Tick(0.1);
 	}
 }
