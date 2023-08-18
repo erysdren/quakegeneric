@@ -28,6 +28,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "video.h"
 #include "audio.h"
 #include "pci.h"
+#include "bootdev.h"
+#include "fs.h"
+#include "part.h"
+#include "dirent.h"
+#include "panic.h"
+#include "unistd.h"
 
 #include "quakegeneric.h"
 #include "quakekeys.h"
@@ -71,6 +77,38 @@ void QG_GetJoyAxes(float *axes)
 
 }
 
+static void mount_boot_fs(void)
+{
+	int npart;
+	struct partition ptab[32];
+	struct filesys *fs;
+	struct fs_node *fsn;
+	struct fs_node *pak;
+
+	// memdisk
+	fs_mount(DEV_MEMDISK, 0, 0, 0);
+
+	// get partition table
+	npart = read_partitions(-1, ptab, sizeof ptab / sizeof *ptab);
+
+	// for your health
+	print_partition_table(ptab, npart);
+
+	// open fs
+	fsn = fs_open("/", 0);
+	if (fsn == NULL)
+		panic("fsn == NULL");
+
+	// mount fs
+	fs = fs_mount(-1, ptab[0].start_sect, ptab[0].size_sect, fsn);
+	if (fs == NULL)
+		panic("fs == NULL");
+
+	pak = fs_open("/id1/pak0.pak", 0);
+	if (pak == NULL)
+		panic("pak == NULL");
+}
+
 void pcboot_main(void)
 {
 	/* init kernel */
@@ -84,6 +122,9 @@ void pcboot_main(void)
 	init_timer();
 	audio_init();
 	enable_intr();
+	bdev_init();
+
+	mount_boot_fs();
 
 	/* init quake */
 	QG_Create(argc, argv);
