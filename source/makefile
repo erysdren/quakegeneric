@@ -7,6 +7,7 @@ obj = $(csrc:.c=.o) $(ssrc:.s=.o) $(Ssrc:.S=.o) $(qsrc:.c=.o) $(msrc:.c=.o)
 dep = $(obj:.o=.d)
 elf = QuakeOS
 bin = QuakeOS.bin
+disk = QuakeOS.img
 
 warn = -pedantic -Wall
 opt = -fno-stack-protector -O2
@@ -18,7 +19,7 @@ CFLAGS = $(ccarch) -march=i386 $(warn) $(opt) $(dbg) $(gccopt) $(inc) $(def)
 ASFLAGS = $(asarch) -march=i386 $(dbg) -nostdinc -fno-builtin $(inc)
 LDFLAGS = $(ldarch) -nostdlib -T pcboot.ld -print-gc-sections
 
-QEMU_FLAGS = -drive file=floppy.img,format=raw,if=floppy -serial file:serial.log -device sb16
+QEMU_FLAGS = -drive file=$(disk),format=raw -serial file:serial.log -device sb16
 
 ifneq ($(shell uname -m), i386)
 	ccarch = -m32
@@ -35,9 +36,9 @@ LD = $(TOOLPREFIX)ld
 OBJCOPY = $(TOOLPREFIX)objcopy
 OBJDUMP = $(TOOLPREFIX)objdump
 
-all: disk.img
+all: $(disk)
 
-disk.img: boot.img blank.img
+$(disk): boot.img blank.img
 	cp blank.img $@
 	dd if=boot.img of=$@ bs=512 status=none conv=notrunc
 	dd if=blank.img of=$@ bs=1 seek=440 skip=440 count=70 status=none conv=notrunc
@@ -85,7 +86,7 @@ $(elf): $(obj)
 
 .PHONY: clean
 clean:
-	rm -f $(obj) $(bin) $(elf) boot.img floppy.img link.map pcboot.iso blank.img disk.img
+	rm -f $(obj) $(bin) $(elf) boot.img floppy.img link.map pcboot.iso blank.img $(disk)
 
 .PHONY: cleandep
 cleandep:
