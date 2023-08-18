@@ -26,6 +26,8 @@ source/id1/
 QuakeOS
 *.log
 *.pak
+source/cdrom/
+*.iso
 
 # vim
 *.swp
