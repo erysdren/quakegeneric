@@ -31,6 +31,23 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #define sqrt(x)		__builtin_sqrt(x)
 #define atan2(y, x)	__builtin_atan2(y, x)
 
+#define ceil(a) __builtin_ceil(a)
+#define floor(a) __builtin_floor(a)
+#define asin(a) __builtin_asin(a)
+#define acos(a) __builtin_acos(a)
+#define atan(a) __builtin_atan(a)
+
+#define ceilf(a) __builtin_ceilf(a)
+#define floorf(a) __builtin_floorf(a)
+#define sqrtf(a) __builtin_sqrtf(a)
+#define sinf(a) __builtin_sinf(a)
+#define cosf(a) __builtin_cosf(a)
+#define tanf(a) __builtin_tanf(a)
+#define asinf(a) __builtin_asinf(a)
+#define acosf(a) __builtin_acosf(a)
+#define atanf(a) __builtin_atanf(a)
+#define atan2f(x, y) __builtin_atan2f(x, y)
+
 double pow(double x, double y);
 
 #endif	/* MATH_H_ */
