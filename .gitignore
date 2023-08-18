@@ -25,6 +25,7 @@ source/id1/
 *.img
 QuakeOS
 *.log
+*.pak
 
 # vim
 *.swp
