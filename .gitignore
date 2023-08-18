@@ -20,6 +20,7 @@ source/id1/
 *.rsp
 *.err
 *.d
+*.map
 
 # vim
 *.swp
