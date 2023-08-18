@@ -1,17 +1,8 @@
-# quakegeneric
+# QuakeOS
 
 ![a low-resolution screenshot of quake](./.github/quakegeneric.png)
 
-it's like [doomgeneric](https://github.com/ozkl/doomgeneric), but for quake. it's based on the GPL WinQuake source code.
-
-currently it can only compile for 32-bit architechtures.
-
-## implementations
-
-- [`quakegeneric_null.c`](./source/quakegeneric_null.c) - null
-- [`quakegeneric_dos.c`](./source/quakegeneric_dos.c) - MS-DOS
-- [`quakegeneric_sdl2.c`](./source/quakegeneric_sdl2.c) - SDL2
-- [`quakegeneric_w32.c`](./source/quakegeneric_w32.c) - Win32
+wow! you found the super secret QuakeOS branch.
 
 ## building
 
@@ -21,49 +12,6 @@ on unix-like platforms:
 cd source/
 make
 ```
-
-for Open Watcom:
-
-```
-cd source/
-wmake -f makefile.wat
-```
-
-for CMake:
-
-```
-mkdir cmake-build
-cd cmake-build/
-cmake ..
-make
-```
-
-for Meson:
-
-```
-mkdir meson-build
-meson setup meson-build
-cd meson-build/
-meson compile
-```
-
-for Windows:
-
-```
-cd source/
-nmake makefile.win
-```
-
-## platforms
-
-the following compilers have been tested to work with this source:
-
-- GCC
-- Clang
-- MinGW
-- TinyCC
-- Open Watcom
-- MSVC
 
 ## License
 
