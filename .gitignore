@@ -28,6 +28,7 @@ QuakeOS
 *.pak
 source/cdrom/
 *.iso
+*.sym
 
 # vim
 *.swp
