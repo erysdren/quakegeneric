@@ -25,7 +25,6 @@ source/id1/
 *.img
 QuakeOS
 *.log
-*.pak
 source/cdrom/
 *.iso
 *.sym
