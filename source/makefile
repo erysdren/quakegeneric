@@ -50,7 +50,6 @@ blank.img:
 	dd if=/dev/zero of=$@ bs=1024 count=65536
 	echo start=2048 type=c | sfdisk $@
 	dd if=part.img of=$@ bs=512 seek=2048 conv=notrunc
-	rm part.img
 
 floppy.img: boot.img
 	dd if=/dev/zero of=$@ bs=512 count=2880
@@ -86,7 +85,7 @@ $(elf): $(obj)
 
 .PHONY: clean
 clean:
-	rm -f $(obj) $(bin) $(elf) boot.img floppy.img link.map pcboot.iso blank.img $(disk)
+	rm -f $(obj) $(bin) $(elf) boot.img floppy.img link.map pcboot.iso blank.img $(disk) part.img
 
 .PHONY: cleandep
 cleandep:
@@ -105,11 +104,11 @@ $(elf).sym: $(elf)
 	$(OBJCOPY) --only-keep-debug $< $@
 
 .PHONY: run
-run: $(bin)
+run: $(disk)
 	qemu-system-i386 $(QEMU_FLAGS)
 
 .PHONY: debug
-debug: $(bin) $(elf).sym
+debug: $(disk) $(elf).sym
 	qemu-system-i386 $(QEMU_FLAGS) -s -S
 
 .PHONY: sym
