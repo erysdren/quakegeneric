@@ -8,7 +8,7 @@ elf = test
 bin = test.bin
 
 warn = -pedantic -Wall
-#opt = -O2
+opt = -fno-stack-protector -O2
 dbg = -g
 inc = -Ipcboot/src -Ipcboot/src/libc -Ipcboot/src/test
 gccopt = -fno-pic -ffreestanding -nostdinc -fno-builtin -ffast-math -fcommon
