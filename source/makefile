@@ -35,6 +35,22 @@ LD = $(TOOLPREFIX)ld
 OBJCOPY = $(TOOLPREFIX)objcopy
 OBJDUMP = $(TOOLPREFIX)objdump
 
+all: disk.img
+
+disk.img: boot.img blank.img
+	cp blank.img $@
+	dd if=boot.img of=$@ bs=512 status=none conv=notrunc
+	dd if=blank.img of=$@ bs=1 seek=440 skip=440 count=70 status=none conv=notrunc
+
+blank.img:
+	dd if=/dev/zero of=part.img bs=1024 count=63488
+	mkfs -t vfat -n QUAKEOS part.img
+	mcopy -i part.img data/* ::./
+	dd if=/dev/zero of=$@ bs=1024 count=65536
+	echo start=2048 type=c | sfdisk $@
+	dd if=part.img of=$@ bs=512 seek=2048 conv=notrunc
+	rm part.img
+
 floppy.img: boot.img
 	dd if=/dev/zero of=$@ bs=512 count=2880
 	dd if=$< of=$@ conv=notrunc
@@ -44,7 +60,6 @@ pcboot.iso: floppy.img
 	git archive --format=tar --prefix=cdrom/ HEAD | tar xf -
 	cp $< cdrom
 	mkisofs -o $@ -R -J -V pcboot -b $< cdrom game
-
 
 boot.img: bootldr.bin $(bin)
 	cat bootldr.bin $(bin) >$@
@@ -70,7 +85,7 @@ $(elf): $(obj)
 
 .PHONY: clean
 clean:
-	rm -f $(obj) $(bin) $(elf) boot.img floppy.img link.map pcboot.iso
+	rm -f $(obj) $(bin) $(elf) boot.img floppy.img link.map pcboot.iso blank.img disk.img
 
 .PHONY: cleandep
 cleandep:
