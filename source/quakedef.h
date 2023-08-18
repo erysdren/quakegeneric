@@ -36,7 +36,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // Slart: For intptr_t, unlikely to be supported on all compilers
 #include <stddef.h>
-#include <stdint.h>
 
 #define	VID_LockBuffer()
 #define	VID_UnlockBuffer()
