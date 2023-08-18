@@ -30,6 +30,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "pci.h"
 #include "vbetest.h"
 
+#include "quakegeneric.h"
+#include "quakekeys.h"
 
 void logohack(void);
 

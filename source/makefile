@@ -1,8 +1,9 @@
-csrc = $(wildcard pcboot/src/*.c) $(wildcard pcboot/src/libc/*.c) $(wildcard pcboot/src/test/*.c)
-ssrc = $(wildcard pcboot/src/*.s) $(wildcard pcboot/src/libc/*.s) $(wildcard pcboot/src/boot/*.s) $(wildcard pcboot/src/test/*.s)
-Ssrc = $(wildcard pcboot/src/*.S)
-qsrc = $(wildcard source/*.c)
-obj = $(csrc:.c=.o) $(ssrc:.s=.o) $(Ssrc:.S=.o)
+csrc = $(wildcard pcboot/*.c) $(wildcard pcboot/libc/*.c) $(wildcard pcboot/test/*.c)
+ssrc = $(wildcard pcboot/*.s) $(wildcard pcboot/libc/*.s) $(wildcard pcboot/boot/*.s) $(wildcard pcboot/test/*.s)
+Ssrc = $(wildcard pcboot/*.S)
+qsrc = $(wildcard quake/*.c)
+msrc = main.c
+obj = $(csrc:.c=.o) $(ssrc:.s=.o) $(Ssrc:.S=.o) $(qsrc:.c=.o) $(msrc:.c=.o)
 dep = $(obj:.o=.d)
 elf = test
 bin = test.bin
@@ -10,7 +11,7 @@ bin = test.bin
 warn = -pedantic -Wall
 opt = -fno-stack-protector -O2
 dbg = -g
-inc = -Ipcboot/src -Ipcboot/src/libc -Ipcboot/src/test
+inc = -Ipcboot -Ipcboot/libc -Ipcboot/test
 gccopt = -fno-pic -ffreestanding -nostdinc -fno-builtin -ffast-math -fcommon
 
 CFLAGS = $(ccarch) -march=i386 $(warn) $(opt) $(dbg) $(gccopt) $(inc) $(def)
