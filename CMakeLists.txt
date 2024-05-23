@@ -7,8 +7,6 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED TRUE)
 
 # compile options
-add_compile_options(-m32 -std=gnu99)
-add_link_options(-m32)
 
 # tinycc
 if(CMAKE_C_COMPILER_ID STREQUAL "TinyCC")
@@ -22,7 +20,7 @@ if(MATH)
 endif()
 
 # sources
-set(QUAKEGENERIC_SOURCES
+set(QUAKEGENERIC_LIB_SOURCES
 	${PROJECT_SOURCE_DIR}/source/cd_null.c
 	${PROJECT_SOURCE_DIR}/source/chase.c
 	${PROJECT_SOURCE_DIR}/source/cl_demo.c
@@ -94,4 +92,33 @@ set(QUAKEGENERIC_SOURCES
 )
 
 # library
-add_library(quakegeneric STATIC ${QUAKEGENERIC_SOURCES})
+add_library(quakegeneric_lib STATIC ${QUAKEGENERIC_LIB_SOURCES})
+set_target_properties(quakegeneric_lib PROPERTIES OUTPUT_NAME "quakegeneric")
+target_compile_options(quakegeneric_lib PRIVATE -std=gnu99)
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+	target_compile_options(quakegeneric_lib PUBLIC -m32)
+	target_link_options(quakegeneric_lib PUBLIC -m32)
+endif()
+
+# psp
+if(PSP)
+
+	include(FindPkgConfig)
+	pkg_search_module(SDL2 REQUIRED sdl2)
+
+	add_executable(quakegeneric_sdl2 ${PROJECT_SOURCE_DIR}/source/quakegeneric_sdl2.c)
+	target_include_directories(quakegeneric_sdl2 PRIVATE ${SDL2_INCLUDE_DIRS})
+	target_link_libraries(quakegeneric_sdl2 PRIVATE ${SDL2_LIBRARIES})
+	target_link_libraries(quakegeneric_sdl2 PRIVATE quakegeneric_lib)
+
+	create_pbp_file(
+		TARGET quakegeneric_sdl2
+		ICON_PATH NULL
+		BACKGROUND_PATH NULL
+		PREVIEW_PATH NULL
+		TITLE ${CMAKE_PROJECT_NAME}
+		VERSION ${CMAKE_PROJECT_VERSION}
+	)
+
+endif()
