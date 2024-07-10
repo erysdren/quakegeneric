@@ -31,11 +31,6 @@ SDL_Texture *texture;
 uint32_t *rgbpixels;
 unsigned char pal[768];
 
-#if defined(__PSP__) || defined(_PSP) || defined(PSP) || defined(__psp__)
-#include <pspdebug.h>
-PSP_MODULE_INFO("portable quake", 0, 1, 0);
-#endif
-
 #define ARGB(r, g, b, a) (((a) << 24) | ((r) << 16) | ((g) << 8) | (b))
 
 #define KEYBUFFERSIZE	32

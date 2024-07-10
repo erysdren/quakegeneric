@@ -6,17 +6,9 @@ set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED TRUE)
 
-# compile options
-
 # tinycc
 if(CMAKE_C_COMPILER_ID STREQUAL "TinyCC")
 	add_compile_definitions(-DSDL_DISABLE_IMMINTRIN_H=1)
-endif()
-
-# find math library
-find_library(MATH m)
-if(MATH)
-	link_libraries(${MATH})
 endif()
 
 # sources
@@ -91,19 +83,21 @@ set(QUAKEGENERIC_LIB_SOURCES
 	${PROJECT_SOURCE_DIR}/source/quakegeneric.c
 )
 
-# library
 add_library(quakegeneric_lib STATIC ${QUAKEGENERIC_LIB_SOURCES})
 set_target_properties(quakegeneric_lib PROPERTIES OUTPUT_NAME "quakegeneric")
-target_compile_options(quakegeneric_lib PRIVATE -std=gnu99)
+
+# find math library
+find_library(MATH m)
+if(MATH)
+	target_link_libraries(quakegeneric_lib PRIVATE ${MATH})
+endif()
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 	target_compile_options(quakegeneric_lib PUBLIC -m32)
 	target_link_options(quakegeneric_lib PUBLIC -m32)
 endif()
 
-# psp
 if(PSP)
-
 	include(FindPkgConfig)
 	pkg_search_module(SDL2 REQUIRED sdl2)
 
@@ -120,5 +114,4 @@ if(PSP)
 		TITLE ${CMAKE_PROJECT_NAME}
 		VERSION ${CMAKE_PROJECT_VERSION}
 	)
-
 endif()
