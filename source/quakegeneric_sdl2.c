@@ -45,8 +45,10 @@ static SDL_Joystick *joystick;
 void QG_Init(void)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
-	window = SDL_CreateWindow("Quake", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, QUAKEGENERIC_RES_X, QUAKEGENERIC_RES_Y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow("Quake", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, QUAKEGENERIC_RES_X, QUAKEGENERIC_RES_Y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED);
+	SDL_SetWindowMinimumSize(window, QUAKEGENERIC_RES_X, QUAKEGENERIC_RES_Y);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE | SDL_RENDERER_PRESENTVSYNC);
+	SDL_RenderSetLogicalSize(renderer, QUAKEGENERIC_RES_X, QUAKEGENERIC_RES_Y);
 	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, QUAKEGENERIC_RES_X, QUAKEGENERIC_RES_Y);
 	rgbpixels = malloc(QUAKEGENERIC_RES_X * QUAKEGENERIC_RES_Y * sizeof(uint32_t));
 
@@ -255,52 +257,8 @@ void QG_Quit(void)
 	SDL_Quit();
 }
 
-#define ASPECT_WH ((float)(QUAKEGENERIC_RES_X) / (float)(QUAKEGENERIC_RES_Y))
-#define ASPECT_HW ((float)(QUAKEGENERIC_RES_Y) / (float)(QUAKEGENERIC_RES_X))
-
-static inline void calc_screen_size(int x, int y, SDL_Rect *rect)
-{
-	if (y < x && (y * ASPECT_WH) < x)
-	{
-		rect->w = y * ASPECT_WH;
-		rect->h = y;
-	}
-	else if ((x / y) == ASPECT_WH)
-	{
-		rect->w = x;
-		rect->h = y;
-	}
-	else
-	{
-		rect->w = x;
-		rect->h = x * ASPECT_HW;
-	}
-}
-
-static inline void calc_screen_pos(int x, int y, SDL_Rect *rect)
-{
-	if (y < x && (y * ASPECT_WH) < x)
-	{
-		rect->x = (x / 2) - ((y * ASPECT_WH) / 2);
-		rect->y = 0;
-	}
-	else if (x / y == ASPECT_WH)
-	{
-		rect->x = 0;
-		rect->y = 0;
-	}
-	else
-	{
-		rect->x = 0;
-		rect->y = (y / 2) - ((x * ASPECT_HW) / 2);
-	}
-}
-
 void QG_DrawFrame(void *pixels)
 {
-	int x, y;
-	SDL_Rect rect;
-
 	// convert pixels
 	for (int i = 0; i < QUAKEGENERIC_RES_X * QUAKEGENERIC_RES_Y; i++)
 	{
@@ -309,21 +267,16 @@ void QG_DrawFrame(void *pixels)
 		rgbpixels[i] = ARGB(*(entry), *(entry + 1), *(entry + 2), 255);
 	}
 
-	// calc window pos
-	SDL_GetRendererOutputSize(renderer, &x, &y);
-	calc_screen_pos(x, y, &rect);
-	calc_screen_size(x, y, &rect);
-
 	// blit
 	SDL_UpdateTexture(texture, NULL, rgbpixels, QUAKEGENERIC_RES_X * sizeof(uint32_t));
 	SDL_RenderClear(renderer);
-	SDL_RenderCopy(renderer, texture, NULL, &rect);
+	SDL_RenderCopy(renderer, texture, NULL, NULL);
 	SDL_RenderPresent(renderer);
 }
 
 void QG_SetPalette(unsigned char palette[768])
 {
-	memcpy(pal, palette, 768);
+	SDL_memcpy(pal, palette, 768);
 }
 
 int main(int argc, char *argv[])

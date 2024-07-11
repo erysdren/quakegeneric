@@ -26,15 +26,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 viddef_t	vid;				// global video state
 
-#define	BASEWIDTH	320
-#define	BASEHEIGHT	200
+#define	BASEWIDTH	640
+#define	BASEHEIGHT	480
 
 byte	vid_buffer[BASEWIDTH*BASEHEIGHT];
 short	zbuffer[BASEWIDTH*BASEHEIGHT];
-byte	surfcache[SURFCACHE_SIZE_AT_320X200];
-
-unsigned short	d_8to16table[256];
-unsigned	d_8to24table[256];
+byte	*surfcache;
+size_t	surfcache_size;
 
 void	VID_SetPalette (unsigned char *palette)
 {
@@ -60,7 +58,10 @@ void	VID_Init (unsigned char *palette)
 	vid.rowbytes = vid.conrowbytes = BASEWIDTH;
 	
 	d_pzbuffer = zbuffer;
-	D_InitCaches (surfcache, sizeof(surfcache));
+
+	surfcache_size = D_SurfaceCacheForRes(BASEWIDTH, BASEHEIGHT);
+	surfcache = malloc(surfcache_size);
+	D_InitCaches (surfcache, surfcache_size);
 
 	// quake generic
 	QG_Init();
@@ -68,6 +69,7 @@ void	VID_Init (unsigned char *palette)
 
 void	VID_Shutdown (void)
 {
+		free(surfcache);
 }
 
 void	VID_Update (vrect_t *rects)

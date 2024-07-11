@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakekeys.h"
 
-#define QUAKEGENERIC_RES_X 320
-#define QUAKEGENERIC_RES_Y 200
+#define QUAKEGENERIC_RES_X 640
+#define QUAKEGENERIC_RES_Y 480
 
 #define QUAKEGENERIC_JOY_MAX_AXES 6
 #define QUAKEGENERIC_JOY_AXIS_X 0
