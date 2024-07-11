@@ -26,8 +26,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 viddef_t	vid;				// global video state
 
-#define	BASEWIDTH	640
-#define	BASEHEIGHT	480
+#define	BASEWIDTH	320
+#define	BASEHEIGHT	240
 
 byte	vid_buffer[BASEWIDTH*BASEHEIGHT];
 short	zbuffer[BASEWIDTH*BASEHEIGHT];
