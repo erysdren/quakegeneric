@@ -30,6 +30,16 @@ int QG_GetKey(int *down, int *key)
 	return 0;
 }
 
+void QG_GetMouseMove(int *x, int *y)
+{
+
+}
+
+void QG_GetJoyAxes(float *axes)
+{
+    *axes = 0;
+}
+
 void QG_Quit(void)
 {
 
