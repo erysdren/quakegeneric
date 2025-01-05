@@ -215,6 +215,8 @@ static int KeyPop(int *down, int *key)
 		*key = -*key;
 	keybuffer_start = (keybuffer_start + 1) % KEYBUFFERSIZE;
 	keybuffer_len--;
+
+	return 1;
 }
 
 static int KeyPush(int down, int key)
@@ -227,6 +229,8 @@ static int KeyPush(int down, int key)
 	}
 	keybuffer[(keybuffer_start + keybuffer_len) % KEYBUFFERSIZE] = key;
 	keybuffer_len++;
+
+	return 1;
 }
 
 int QG_GetKey(int *down, int *key)
