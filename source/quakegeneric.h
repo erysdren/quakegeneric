@@ -35,6 +35,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define QUAKEGENERIC_JOY_AXIS_V 5
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // provided functions
 void QG_Tick(double duration);
 void QG_Create(int argc, char *argv[]);
@@ -47,5 +51,9 @@ void QG_SetPalette(unsigned char palette[768]);
 int QG_GetKey(int *down, int *key);
 void QG_GetMouseMove(int *x, int *y);
 void QG_GetJoyAxes(float *axes);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __QUAKEGENERIC__
