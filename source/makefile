@@ -1,111 +1,63 @@
-CC ?= gcc
-AR ?= ar
-RM ?= rm -f
 
-ifeq ($(CC), tcc)
-override CFLAGS += -DSDL_DISABLE_IMMINTRIN_H=1
+RM?=rm -f
+PKGCONFIG?=pkg-config
+
+LIBEXT?=.a
+BINEXT?=
+OBJEXT?=.o
+
+ifeq ($(CC),tcc)
+override CFLAGS+=-DSDL_DISABLE_IMMINTRIN_H=1
 endif
 
-ifeq ($(DEBUG), 1)
-override CFLAGS += -g3
+ifeq ($(DEBUG),1)
+override CFLAGS+=-g -O0
 endif
 
-ifeq ($(PARANOID), 1)
-override CFLAGS += -fsanitize=address,undefined -Wall -Wextra -pedantic
-override LDFLAGS += -fsanitize=address,undefined
+ifeq ($(PARANOID),1)
+override CFLAGS+=-fsanitize=address,undefined -Wall -Wextra -pedantic
+override LDFLAGS+=-fsanitize=address,undefined
 endif
 
-ifeq ($(RELEASE), 1)
-override CFLAGS += -O3
-override LDFLAGS += -O3
+ifeq ($(RELEASE),1)
+override CFLAGS+=-O3
+override LDFLAGS+=-O3
 endif
 
-override CFLAGS += -m32 -std=gnu99 $(shell sdl2-config --cflags)
-override LDFLAGS += -m32 -lm $(shell sdl2-config --libs)
+override CFLAGS+=-m32 -std=gnu99 $(shell $(PKGCONFIG) sdl2 --cflags)
+override LDFLAGS+=-m32 -lm $(shell $(PKGCONFIG) sdl2 --libs)
 
-OBJECTS = \
-	cd_null.o \
-	chase.o \
-	cl_demo.o \
-	cl_input.o \
-	cl_main.o \
-	cl_parse.o \
-	cl_tent.o \
-	cmd.o \
-	common.o \
-	console.o \
-	crc.o \
-	cvar.o \
-	d_edge.o \
-	d_fill.o \
-	d_init.o \
-	d_modech.o \
-	d_part.o \
-	d_polyse.o \
-	d_scan.o \
-	d_sky.o \
-	d_sprite.o \
-	d_surf.o \
-	d_vars.o \
-	d_zpoint.o \
-	draw.o \
-	host_cmd.o \
-	host.o \
-	in_null.o \
-	keys.o \
-	mathlib.o \
-	menu.o \
-	model.o \
-	net_loop.o \
-	net_main.o \
-	net_none.o \
-	net_vcr.o \
-	nonintel.o \
-	pr_cmds.o \
-	pr_edict.o \
-	pr_exec.o \
-	r_aclip.o \
-	r_alias.o \
-	r_bsp.o \
-	r_draw.o \
-	r_edge.o \
-	r_efrag.o \
-	r_light.o \
-	r_main.o \
-	r_misc.o \
-	r_part.o \
-	r_sky.o \
-	r_sprite.o \
-	r_surf.o \
-	r_vars.o \
-	sbar.o \
-	screen.o \
-	snd_null.o \
-	sv_main.o \
-	sv_move.o \
-	sv_phys.o \
-	sv_user.o \
-	sys_null.o \
-	vid_null.o \
-	view.o \
-	wad.o \
-	world.o \
-	zone.o \
-	quakegeneric.o
+EXECNAME?=quakegeneric$(BINEXT)
+LIBNAME?=libquakegeneric$(LIBEXT)
 
-OBJECTS_SDL2 = \
-	quakegeneric_sdl2.o
+OBJS = \
+	cd_null$(OBJEXT) chase$(OBJEXT) cl_demo$(OBJEXT) cl_input$(OBJEXT) \
+	cl_main$(OBJEXT) cl_parse$(OBJEXT) cl_tent$(OBJEXT) cmd$(OBJEXT) \
+	common$(OBJEXT) console$(OBJEXT) crc$(OBJEXT) cvar$(OBJEXT) \
+	d_edge$(OBJEXT) d_fill$(OBJEXT) d_init$(OBJEXT) d_modech$(OBJEXT) \
+	d_part$(OBJEXT) d_polyse$(OBJEXT) d_scan$(OBJEXT) d_sky$(OBJEXT) \
+	d_sprite$(OBJEXT) d_surf$(OBJEXT) d_vars$(OBJEXT) d_zpoint$(OBJEXT) \
+	draw$(OBJEXT) host_cmd$(OBJEXT) host$(OBJEXT) in_null$(OBJEXT) \
+	keys$(OBJEXT) mathlib$(OBJEXT) menu$(OBJEXT) model$(OBJEXT) \
+	net_loop$(OBJEXT) net_main$(OBJEXT) net_none$(OBJEXT) net_vcr$(OBJEXT) \
+	nonintel$(OBJEXT) pr_cmds$(OBJEXT) pr_edict$(OBJEXT) pr_exec$(OBJEXT) \
+	r_aclip$(OBJEXT) r_alias$(OBJEXT) r_bsp$(OBJEXT) r_draw$(OBJEXT) \
+	r_edge$(OBJEXT) r_efrag$(OBJEXT) r_light$(OBJEXT) r_main$(OBJEXT) \
+	r_misc$(OBJEXT) r_part$(OBJEXT) r_sky$(OBJEXT) r_sprite$(OBJEXT) \
+	r_surf$(OBJEXT) r_vars$(OBJEXT) sbar$(OBJEXT) screen$(OBJEXT) \
+	snd_null$(OBJEXT) sv_main$(OBJEXT) sv_move$(OBJEXT) sv_phys$(OBJEXT) \
+	sv_user$(OBJEXT) sys_null$(OBJEXT) vid_null$(OBJEXT) view$(OBJEXT) \
+	wad$(OBJEXT) world$(OBJEXT) zone$(OBJEXT) quakegeneric$(OBJEXT)
 
-all: libquakegeneric.a quakegeneric
+OBJS_SDL2=quakegeneric_sdl2$(OBJEXT)
+
+all: $(EXECNAME) $(LIBNAME)
 
 clean:
-	$(RM) *.a *.o *.obj *.rsp *.err *.exe quakegeneric
+	$(RM) $(OBJS)
 
-%.o: %.c
-	$(CC) -c $(CFLAGS) -o $@ $<
+$(EXECNAME): $(OBJS) $(OBJS_SDL2)
+	$(CC) -o $@ $(OBJS) $(OBJS_SDL2) $(LDFLAGS)
 
-quakegeneric: $(OBJECTS) $(OBJECTS_SDL2)
-	$(CC) -o $@ $(OBJECTS) $(OBJECTS_SDL2) $(LDFLAGS)
-
-libquakegeneric.a: $(OBJECTS)
-	$(AR) rcs $@ $(OBJECTS)
+$(LIBNAME): $(OBJS)
+	$(AR) rcs $@ $(OBJS)
