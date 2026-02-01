@@ -889,7 +889,7 @@ void PF_dprint (void)
 	Con_DPrintf ("%s",PF_VarString(0));
 }
 
-char	pr_string_temp[128];
+char	*pr_string_temp;
 
 void PF_ftos (void)
 {

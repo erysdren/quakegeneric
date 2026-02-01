@@ -55,6 +55,7 @@ void *QG_Alloc(size_t sz)
 
 #define	MAX_MOD_KNOWN	256
 extern model_t	*mod_known;
+extern char *pr_string_temp;
 
 void QG_Create(int argc, char *argv[])
 {
@@ -65,6 +66,7 @@ void QG_Create(int argc, char *argv[])
 	parms.membase = QG_Alloc(parms.memsize);
 	sv = QG_Alloc(sizeof(server_t));
 	mod_known = QG_Alloc(MAX_MOD_KNOWN * sizeof(model_t));
+	pr_string_temp = QG_Alloc(128);
 
 	parms.basedir = ".";
 

@@ -146,39 +146,42 @@ char *PR_GlobalStringNoContents (int ofs);
 PR_PrintStatement
 =================
 */
-void PR_PrintStatement (dstatement_t *s)
+void PR_PrintStatement (int sid, dstatement_t *s)
 {
 	int		i;
 	
+	printf("%6d: ", sid);
+
 	if ( (unsigned)s->op < sizeof(pr_opnames)/sizeof(pr_opnames[0]))
 	{
-		Con_Printf ("%s ",  pr_opnames[s->op]);
+		printf ("%s ",  pr_opnames[s->op]);
 		i = strlen(pr_opnames[s->op]);
 		for ( ; i<10 ; i++)
-			Con_Printf (" ");
+			printf (" ");
 	}
 		
 	if (s->op == OP_IF || s->op == OP_IFNOT)
-		Con_Printf ("%sbranch %i",PR_GlobalString(s->a),s->b);
+		printf ("%sbranch %i",PR_GlobalString(s->a),s->b);
 	else if (s->op == OP_GOTO)
 	{
-		Con_Printf ("branch %i",s->a);
+		printf ("branch %i",s->a);
 	}
 	else if ( (unsigned)(s->op - OP_STORE_F) < 6)
 	{
-		Con_Printf ("%s",PR_GlobalString(s->a));
-		Con_Printf ("%s", PR_GlobalStringNoContents(s->b));
+		printf ("%s",PR_GlobalString(s->a));
+		printf ("%s", PR_GlobalStringNoContents(s->b));
 	}
 	else
 	{
 		if (s->a)
-			Con_Printf ("%s",PR_GlobalString(s->a));
+			printf ("%s",PR_GlobalString(s->a));
 		if (s->b)
-			Con_Printf ("%s",PR_GlobalString(s->b));
+			printf ("%s",PR_GlobalString(s->b));
 		if (s->c)
-			Con_Printf ("%s", PR_GlobalStringNoContents(s->c));
+			printf ("%s", PR_GlobalStringNoContents(s->c));
 	}
-	Con_Printf ("\n");
+	printf ("\n");
+	fflush(stdout);
 }
 
 /*
@@ -193,7 +196,7 @@ void PR_StackTrace (void)
 	
 	if (pr_depth == 0)
 	{
-		Con_Printf ("<NO STACK>\n");
+		printf ("<NO STACK>\n");
 		return;
 	}
 	
@@ -204,10 +207,10 @@ void PR_StackTrace (void)
 		
 		if (!f)
 		{
-			Con_Printf ("<NO FUNCTION>\n");
+			printf ("<NO FUNCTION>\n");
 		}
 		else
-			Con_Printf ("%12s : %s\n", pr_strings + f->s_file, pr_strings + f->s_name);		
+			printf ("%12s : %s\n", pr_strings + f->s_file, pr_strings + f->s_name);		
 	}
 }
 
@@ -266,7 +269,7 @@ void PR_RunError (char *error, ...)
 	vsprintf (string,error,argptr);
 	va_end (argptr);
 
-	PR_PrintStatement (pr_statements + pr_xstatement);
+	PR_PrintStatement (pr_xstatement, pr_statements + pr_xstatement);
 	PR_StackTrace ();
 	Con_Printf ("%s\n", string);
 	
@@ -379,7 +382,7 @@ void PR_ExecuteProgram (func_t fnum)
 	f = &pr_functions[fnum];
 
 	runaway = 100000;
-	pr_trace = false;
+	pr_trace = true;
 
 // make a stack frame
 	exitdepth = pr_depth;
@@ -389,6 +392,11 @@ void PR_ExecuteProgram (func_t fnum)
 while (1)
 {
 	s++;	// next statement
+
+	if(s == 1869)
+	{
+		printf("1869\n");
+	}
 
 	st = &pr_statements[s];
 	a = (eval_t *)&pr_globals[st->a];
@@ -402,7 +410,7 @@ while (1)
 	pr_xstatement = s;
 	
 	if (pr_trace)
-		PR_PrintStatement (st);
+		PR_PrintStatement (s, st);
 		
 	switch (st->op)
 	{
