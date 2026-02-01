@@ -19,39 +19,31 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "quakedef.h"
-#include <sys/mman.h>
-#include <errno.h>
 
 void QG_Tick(double duration)
 {
 	Host_Frame(duration);
 }
 
-void *QG_Alloc(size_t sz)
-{
-#ifdef __64
-	size_t mmapsize = ((size_t)sz + (65536U - 1)) & ~(65536U - 1);
-	void *ret = mmap(NULL, mmapsize, PROT_READ | PROT_WRITE, MAP_32BIT | MAP_ANON | MAP_PRIVATE, 0, 0);
-	uintptr_t base = 0U;
-	while(ret == MAP_FAILED)
-	{
-		base += 16U * 1024 * 1024;		// start at 16 MiB and try increasing addresses
-		if(base >= 0x100000000U)
-		{
-			// abort
-			return NULL;
-		}
-		ret = mmap((void *)base, mmapsize, PROT_READ | PROT_WRITE, MAP_FIXED | MAP_ANON | MAP_PRIVATE, 0, 0);
-	}
-	if(ret == MAP_FAILED)
-	{
-		return NULL;
-	}
-	return ret;
-#else
-	return malloc(sz);
-#endif
-}
+/* Quake uses eval_t members to point to the string table.  For compatibility with loading
+	from disk these pointers are 4 bytes.
+
+	The string table is allocated on the heap.  The pointers can come from the
+	heap itself as well as the sv.world_view member, the mod_known array and
+	the pr_string_temp buffer.
+
+	For 32-bits the offset pointers will always be 32-bit, and can be positive or
+	negative as the address space will wraparound.
+
+	For 64-bits, however, we need the offsets to be within 2 GiB and positive else
+	they will point to an invalid address.
+
+	We therefore dynamically allocate sv, mod_known and pr_string_temp to ensure
+	that they are close together, and in the correct order */
+
+#define	MAX_MOD_KNOWN	256
+extern model_t	*mod_known;
+extern char *pr_string_temp;
 
 #define	MAX_MOD_KNOWN	256
 extern model_t	*mod_known;
@@ -63,10 +55,12 @@ void QG_Create(int argc, char *argv[])
 
 	parms.memsize = 8*1024*1024;
 
-	parms.membase = QG_Alloc(parms.memsize);
-	sv = QG_Alloc(sizeof(server_t));
-	mod_known = QG_Alloc(MAX_MOD_KNOWN * sizeof(model_t));
-	pr_string_temp = QG_Alloc(128);
+	parms.membase = malloc(parms.memsize + sizeof(server_t) +
+		MAX_MOD_KNOWN * sizeof(model_t) + 128);
+
+	sv = (server_t *)((byte *)parms.membase + parms.memsize);
+	mod_known = (model_t *)((byte *)sv + sizeof(server_t));
+	pr_string_temp = (char *)((byte *)mod_known + MAX_MOD_KNOWN * sizeof(model_t));
 
 	parms.basedir = ".";
 
