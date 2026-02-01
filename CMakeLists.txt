@@ -7,8 +7,8 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED TRUE)
 
 # compile options
-add_compile_options(-m32 -std=gnu99)
-add_link_options(-m32)
+add_compile_options(-std=gnu99)
+add_link_options()
 
 # tinycc
 if(CMAKE_C_COMPILER_ID STREQUAL "TinyCC")

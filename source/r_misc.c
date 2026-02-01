@@ -398,7 +398,7 @@ void R_SetupFrame (void)
 	if (r_refdef.ambientlight < 0)
 		r_refdef.ambientlight = 0;
 
-	if (!sv.active)
+	if (!sv->active)
 		r_draworder.value = 0;	// don't let cheaters look behind walls
 		
 	R_CheckVariables ();

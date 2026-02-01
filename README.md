@@ -4,7 +4,7 @@
 
 it's like [doomgeneric](https://github.com/ozkl/doomgeneric), but for quake. it's based on the GPL WinQuake source code.
 
-currently it can only compile for 32-bit architechtures.
+it is recommended to use a 32-bit build.  64-bit builds are experimental.
 
 ## implementations
 

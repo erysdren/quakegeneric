@@ -64,7 +64,7 @@ void Host_Status_f (void)
 	
 	if (cmd_source == src_command)
 	{
-		if (!sv.active)
+		if (!sv->active)
 		{
 			Cmd_ForwardToServer ();
 			return;
@@ -80,7 +80,7 @@ void Host_Status_f (void)
 		print ("tcp/ip:  %s\n", my_tcpip_address);
 	if (ipxAvailable)
 		print ("ipx:     %s\n", my_ipx_address);
-	print ("map:     %s\n", sv.name);
+	print ("map:     %s\n", sv->name);
 	print ("players: %i active (%i max)\n\n", net_activeconnections, svs.maxclients);
 	for (j=0, client = svs.clients ; j<svs.maxclients ; j++, client++)
 	{
@@ -280,7 +280,7 @@ void Host_Map_f (void)
 	svs.serverflags = 0;			// haven't completed an episode yet
 	strcpy (name, Cmd_Argv(1));
 	SV_SpawnServer (name);
-	if (!sv.active)
+	if (!sv->active)
 		return;
 	
 	if (cls.state != ca_dedicated)
@@ -313,7 +313,7 @@ void Host_Changelevel_f (void)
 		Con_Printf ("changelevel <levelname> : continue game on a new level\n");
 		return;
 	}
-	if (!sv.active || cls.demoplayback)
+	if (!sv->active || cls.demoplayback)
 	{
 		Con_Printf ("Only the server may changelevel\n");
 		return;
@@ -334,12 +334,12 @@ void Host_Restart_f (void)
 {
 	char	mapname[MAX_QPATH];
 
-	if (cls.demoplayback || !sv.active)
+	if (cls.demoplayback || !sv->active)
 		return;
 
 	if (cmd_source != src_command)
 		return;
-	strcpy (mapname, sv.name);	// must copy out, because it gets cleared
+	strcpy (mapname, sv->name);	// must copy out, because it gets cleared
 								// in sv_spawnserver
 	SV_SpawnServer (mapname);
 }
@@ -431,7 +431,7 @@ void Host_Savegame_f (void)
 	if (cmd_source != src_command)
 		return;
 
-	if (!sv.active)
+	if (!sv->active)
 	{
 		Con_Printf ("Not playing a local game.\n");
 		return;
@@ -487,22 +487,22 @@ void Host_Savegame_f (void)
 	for (i=0 ; i<NUM_SPAWN_PARMS ; i++)
 		fprintf (f, "%f\n", svs.clients->spawn_parms[i]);
 	fprintf (f, "%d\n", current_skill);
-	fprintf (f, "%s\n", sv.name);
-	fprintf (f, "%f\n",sv.time);
+	fprintf (f, "%s\n", sv->name);
+	fprintf (f, "%f\n",sv->time);
 
 // write the light styles
 
 	for (i=0 ; i<MAX_LIGHTSTYLES ; i++)
 	{
-		if (sv.lightstyles[i])
-			fprintf (f, "%s\n", sv.lightstyles[i]);
+		if (sv->lightstyles[i])
+			fprintf (f, "%s\n", sv->lightstyles[i]);
 		else
 			fprintf (f,"m\n");
 	}
 
 
 	ED_WriteGlobals (f);
-	for (i=0 ; i<sv.num_edicts ; i++)
+	for (i=0 ; i<sv->num_edicts ; i++)
 	{
 		ED_Write (f, EDICT_NUM(i));
 		fflush (f);
@@ -578,21 +578,21 @@ void Host_Loadgame_f (void)
 	
 	SV_SpawnServer (mapname);
 
-	if (!sv.active)
+	if (!sv->active)
 	{
 		Con_Printf ("Couldn't load map\n");
 		return;
 	}
-	sv.paused = true;		// pause until all clients connect
-	sv.loadgame = true;
+	sv->paused = true;		// pause until all clients connect
+	sv->loadgame = true;
 
 // load the light styles
 
 	for (i=0 ; i<MAX_LIGHTSTYLES ; i++)
 	{
 		fscanf (f, "%s\n", str);
-		sv.lightstyles[i] = Hunk_Alloc (strlen(str)+1);
-		strcpy (sv.lightstyles[i], str);
+		sv->lightstyles[i] = Hunk_Alloc (strlen(str)+1);
+		strcpy (sv->lightstyles[i], str);
 	}
 
 // load the edicts out of the savegame file
@@ -641,8 +641,8 @@ void Host_Loadgame_f (void)
 		entnum++;
 	}
 	
-	sv.num_edicts = entnum;
-	sv.time = time;
+	sv->num_edicts = entnum;
+	sv->time = time;
 
 	fclose (f);
 
@@ -696,9 +696,9 @@ void Host_Name_f (void)
 	
 // send notification to all clients
 	
-	MSG_WriteByte (&sv.reliable_datagram, svc_updatename);
-	MSG_WriteByte (&sv.reliable_datagram, host_client - svs.clients);
-	MSG_WriteString (&sv.reliable_datagram, host_client->name);
+	MSG_WriteByte (&sv->reliable_datagram, svc_updatename);
+	MSG_WriteByte (&sv->reliable_datagram, host_client - svs.clients);
+	MSG_WriteString (&sv->reliable_datagram, host_client->name);
 }
 
 	
@@ -935,9 +935,9 @@ void Host_Color_f(void)
 	host_client->edict->v.team = bottom + 1;
 
 // send notification to all clients
-	MSG_WriteByte (&sv.reliable_datagram, svc_updatecolors);
-	MSG_WriteByte (&sv.reliable_datagram, host_client - svs.clients);
-	MSG_WriteByte (&sv.reliable_datagram, host_client->colors);
+	MSG_WriteByte (&sv->reliable_datagram, svc_updatecolors);
+	MSG_WriteByte (&sv->reliable_datagram, host_client - svs.clients);
+	MSG_WriteByte (&sv->reliable_datagram, host_client->colors);
 }
 
 /*
@@ -959,7 +959,7 @@ void Host_Kill_f (void)
 		return;
 	}
 	
-	pr_global_struct->time = sv.time;
+	pr_global_struct->time = sv->time;
 	pr_global_struct->self = EDICT_TO_PROG(sv_player);
 	PR_ExecuteProgram (pr_global_struct->ClientKill);
 }
@@ -982,9 +982,9 @@ void Host_Pause_f (void)
 		SV_ClientPrintf ("Pause not allowed.\n");
 	else
 	{
-		sv.paused ^= 1;
+		sv->paused ^= 1;
 
-		if (sv.paused)
+		if (sv->paused)
 		{
 			SV_BroadcastPrintf ("%s paused the game\n", pr_strings + sv_player->v.netname);
 		}
@@ -994,8 +994,8 @@ void Host_Pause_f (void)
 		}
 
 	// send notification to all clients
-		MSG_WriteByte (&sv.reliable_datagram, svc_setpause);
-		MSG_WriteByte (&sv.reliable_datagram, sv.paused);
+		MSG_WriteByte (&sv->reliable_datagram, svc_setpause);
+		MSG_WriteByte (&sv->reliable_datagram, sv->paused);
 	}
 }
 
@@ -1021,7 +1021,7 @@ void Host_PreSpawn_f (void)
 		return;
 	}
 	
-	SZ_Write (&host_client->message, sv.signon.data, sv.signon.cursize);
+	SZ_Write (&host_client->message, sv->signon.data, sv->signon.cursize);
 	MSG_WriteByte (&host_client->message, svc_signonnum);
 	MSG_WriteByte (&host_client->message, 2);
 	host_client->sendsignon = true;
@@ -1051,10 +1051,10 @@ void Host_Spawn_f (void)
 	}
 
 // run the entrance script
-	if (sv.loadgame)
+	if (sv->loadgame)
 	{	// loaded games are fully inited allready
 		// if this is the last client to be connected, unpause
-		sv.paused = false;
+		sv->paused = false;
 	}
 	else
 	{
@@ -1073,11 +1073,11 @@ void Host_Spawn_f (void)
 
 		// call the spawn function
 
-		pr_global_struct->time = sv.time;
+		pr_global_struct->time = sv->time;
 		pr_global_struct->self = EDICT_TO_PROG(sv_player);
 		PR_ExecuteProgram (pr_global_struct->ClientConnect);
 
-		if ((Sys_FloatTime() - host_client->netconnection->connecttime) <= sv.time)
+		if ((Sys_FloatTime() - host_client->netconnection->connecttime) <= sv->time)
 			Sys_Printf ("%s entered the game\n", host_client->name);
 
 		PR_ExecuteProgram (pr_global_struct->PutClientInServer);	
@@ -1089,7 +1089,7 @@ void Host_Spawn_f (void)
 
 // send time of update
 	MSG_WriteByte (&host_client->message, svc_time);
-	MSG_WriteFloat (&host_client->message, sv.time);
+	MSG_WriteFloat (&host_client->message, sv->time);
 
 	for (i=0, client = svs.clients ; i<svs.maxclients ; i++, client++)
 	{
@@ -1109,7 +1109,7 @@ void Host_Spawn_f (void)
 	{
 		MSG_WriteByte (&host_client->message, svc_lightstyle);
 		MSG_WriteByte (&host_client->message, (char)i);
-		MSG_WriteString (&host_client->message, sv.lightstyles[i]);
+		MSG_WriteString (&host_client->message, sv->lightstyles[i]);
 	}
 
 //
@@ -1187,7 +1187,7 @@ void Host_Kick_f (void)
 
 	if (cmd_source == src_command)
 	{
-		if (!sv.active)
+		if (!sv->active)
 		{
 			Cmd_ForwardToServer ();
 			return;
@@ -1428,7 +1428,7 @@ edict_t	*FindViewthing (void)
 	int		i;
 	edict_t	*e;
 	
-	for (i=0 ; i<sv.num_edicts ; i++)
+	for (i=0 ; i<sv->num_edicts ; i++)
 	{
 		e = EDICT_NUM(i);
 		if ( !strcmp (pr_strings + e->v.classname, "viewthing") )
@@ -1565,7 +1565,7 @@ void Host_Startdemos_f (void)
 
 	if (cls.state == ca_dedicated)
 	{
-		if (!sv.active)
+		if (!sv->active)
 			Cbuf_AddText ("map start\n");
 		return;
 	}
@@ -1581,7 +1581,7 @@ void Host_Startdemos_f (void)
 	for (i=1 ; i<c+1 ; i++)
 		strncpy (cls.demos[i-1], Cmd_Argv(i), sizeof(cls.demos[0])-1);
 
-	if (!sv.active && cls.demonum != -1 && !cls.demoplayback)
+	if (!sv->active && cls.demonum != -1 && !cls.demoplayback)
 	{
 		cls.demonum = 0;
 		CL_NextDemo ();

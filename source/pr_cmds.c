@@ -242,7 +242,7 @@ void PF_setmodel (void)
 	m = G_STRING(OFS_PARM1);
 
 // check to see if model was properly precached
-	for (i=0, check = sv.model_precache ; *check ; i++, check++)
+	for (i=0, check = sv->model_precache ; *check ; i++, check++)
 		if (!strcmp(*check, m))
 			break;
 			
@@ -253,7 +253,7 @@ void PF_setmodel (void)
 	e->v.model = m - pr_strings;
 	e->v.modelindex = i; //SV_ModelIndex (m);
 
-	mod = sv.models[ (int)e->v.modelindex];  // Mod_ForName (m, true);
+	mod = sv->models[ (int)e->v.modelindex];  // Mod_ForName (m, true);
 	
 	if (mod)
 		SetMinMaxSize (e, mod->mins, mod->maxs, true);
@@ -517,7 +517,7 @@ void PF_ambientsound (void)
 	attenuation = G_FLOAT(OFS_PARM3);
 	
 // check to see if samp was properly precached
-	for (soundnum=0, check = sv.sound_precache ; *check ; check++, soundnum++)
+	for (soundnum=0, check = sv->sound_precache ; *check ; check++, soundnum++)
 		if (!strcmp(*check,samp))
 			break;
 			
@@ -529,14 +529,14 @@ void PF_ambientsound (void)
 
 // add an svc_spawnambient command to the level signon packet
 
-	MSG_WriteByte (&sv.signon,svc_spawnstaticsound);
+	MSG_WriteByte (&sv->signon,svc_spawnstaticsound);
 	for (i=0 ; i<3 ; i++)
-		MSG_WriteCoord(&sv.signon, pos[i]);
+		MSG_WriteCoord(&sv->signon, pos[i]);
 
-	MSG_WriteByte (&sv.signon, soundnum);
+	MSG_WriteByte (&sv->signon, soundnum);
 
-	MSG_WriteByte (&sv.signon, vol*255);
-	MSG_WriteByte (&sv.signon, attenuation*64);
+	MSG_WriteByte (&sv->signon, vol*255);
+	MSG_WriteByte (&sv->signon, attenuation*64);
 
 }
 
@@ -631,7 +631,7 @@ void PF_traceline (void)
 	if (trace.ent)
 		pr_global_struct->trace_ent = EDICT_TO_PROG(trace.ent);
 	else
-		pr_global_struct->trace_ent = EDICT_TO_PROG(sv.edicts);
+		pr_global_struct->trace_ent = EDICT_TO_PROG(sv->edicts);
 }
 
 /*
@@ -695,9 +695,9 @@ int PF_newcheckclient (int check)
 
 // get the PVS for the entity
 	VectorAdd (ent->v.origin, ent->v.view_ofs, org);
-	leaf = Mod_PointInLeaf (org, sv.worldmodel);
-	pvs = Mod_LeafPVS (leaf, sv.worldmodel);
-	memcpy (checkpvs, pvs, (sv.worldmodel->numleafs+7)>>3 );
+	leaf = Mod_PointInLeaf (org, sv->worldmodel);
+	pvs = Mod_LeafPVS (leaf, sv->worldmodel);
+	memcpy (checkpvs, pvs, (sv->worldmodel->numleafs+7)>>3 );
 
 	return i;
 }
@@ -727,29 +727,29 @@ void PF_checkclient (void)
 	vec3_t	view;
 	
 // find a new check if on a new frame
-	if (sv.time - sv.lastchecktime >= 0.1)
+	if (sv->time - sv->lastchecktime >= 0.1)
 	{
-		sv.lastcheck = PF_newcheckclient (sv.lastcheck);
-		sv.lastchecktime = sv.time;
+		sv->lastcheck = PF_newcheckclient (sv->lastcheck);
+		sv->lastchecktime = sv->time;
 	}
 
 // return check if it might be visible	
-	ent = EDICT_NUM(sv.lastcheck);
+	ent = EDICT_NUM(sv->lastcheck);
 	if (ent->free || ent->v.health <= 0)
 	{
-		RETURN_EDICT(sv.edicts);
+		RETURN_EDICT(sv->edicts);
 		return;
 	}
 
 // if current entity can't possibly see the check entity, return 0
 	self = PROG_TO_EDICT(pr_global_struct->self);
 	VectorAdd (self->v.origin, self->v.view_ofs, view);
-	leaf = Mod_PointInLeaf (view, sv.worldmodel);
-	l = (leaf - sv.worldmodel->leafs) - 1;
+	leaf = Mod_PointInLeaf (view, sv->worldmodel);
+	l = (leaf - sv->worldmodel->leafs) - 1;
 	if ( (l<0) || !(checkpvs[l>>3] & (1<<(l&7)) ) )
 	{
 c_notvis++;
-		RETURN_EDICT(sv.edicts);
+		RETURN_EDICT(sv->edicts);
 		return;
 	}
 
@@ -854,13 +854,13 @@ void PF_findradius (void)
 	vec3_t	eorg;
 	int		i, j;
 
-	chain = (edict_t *)sv.edicts;
+	chain = (edict_t *)sv->edicts;
 	
 	org = G_VECTOR(OFS_PARM0);
 	rad = G_FLOAT(OFS_PARM1);
 
-	ent = NEXT_EDICT(sv.edicts);
-	for (i=1 ; i<sv.num_edicts ; i++, ent = NEXT_EDICT(ent))
+	ent = NEXT_EDICT(sv->edicts);
+	for (i=1 ; i<sv->num_edicts ; i++, ent = NEXT_EDICT(ent))
 	{
 		if (ent->free)
 			continue;
@@ -889,7 +889,7 @@ void PF_dprint (void)
 	Con_DPrintf ("%s",PF_VarString(0));
 }
 
-char	pr_string_temp[128];
+char	*pr_string_temp;
 
 void PF_ftos (void)
 {
@@ -946,7 +946,7 @@ void PF_Find (void)
 	if (!s)
 		PR_RunError ("PF_Find: bad search string");
 		
-	for (e++ ; e < sv.num_edicts ; e++)
+	for (e++ ; e < sv->num_edicts ; e++)
 	{
 		ed = EDICT_NUM(e);
 		if (ed->free)
@@ -961,7 +961,7 @@ void PF_Find (void)
 		}
 	}
 
-	RETURN_EDICT(sv.edicts);
+	RETURN_EDICT(sv->edicts);
 }
 
 void PR_CheckEmptyString (char *s)
@@ -980,7 +980,7 @@ void PF_precache_sound (void)
 	char	*s;
 	int		i;
 	
-	if (sv.state != ss_loading)
+	if (sv->state != ss_loading)
 		PR_RunError ("PF_Precache_*: Precache can only be done in spawn functions");
 		
 	s = G_STRING(OFS_PARM0);
@@ -989,12 +989,12 @@ void PF_precache_sound (void)
 	
 	for (i=0 ; i<MAX_SOUNDS ; i++)
 	{
-		if (!sv.sound_precache[i])
+		if (!sv->sound_precache[i])
 		{
-			sv.sound_precache[i] = s;
+			sv->sound_precache[i] = s;
 			return;
 		}
-		if (!strcmp(sv.sound_precache[i], s))
+		if (!strcmp(sv->sound_precache[i], s))
 			return;
 	}
 	PR_RunError ("PF_precache_sound: overflow");
@@ -1005,7 +1005,7 @@ void PF_precache_model (void)
 	char	*s;
 	int		i;
 	
-	if (sv.state != ss_loading)
+	if (sv->state != ss_loading)
 		PR_RunError ("PF_Precache_*: Precache can only be done in spawn functions");
 		
 	s = G_STRING(OFS_PARM0);
@@ -1014,13 +1014,13 @@ void PF_precache_model (void)
 
 	for (i=0 ; i<MAX_MODELS ; i++)
 	{
-		if (!sv.model_precache[i])
+		if (!sv->model_precache[i])
 		{
-			sv.model_precache[i] = s;
-			sv.models[i] = Mod_ForName (s, true);
+			sv->model_precache[i] = s;
+			sv->models[i] = Mod_ForName (s, true);
 			return;
 		}
-		if (!strcmp(sv.model_precache[i], s))
+		if (!strcmp(sv->model_precache[i], s))
 			return;
 	}
 	PR_RunError ("PF_precache_model: overflow");
@@ -1140,10 +1140,10 @@ void PF_lightstyle (void)
 	val = G_STRING(OFS_PARM1);
 
 // change the string in sv
-	sv.lightstyles[style] = val;
+	sv->lightstyles[style] = val;
 	
 // send message to all clients on this server
-	if (sv.state != ss_active)
+	if (sv->state != ss_active)
 		return;
 	
 	for (j=0, client = svs.clients ; j<svs.maxclients ; j++, client++)
@@ -1218,9 +1218,9 @@ void PF_nextent (void)
 	while (1)
 	{
 		i++;
-		if (i == sv.num_edicts)
+		if (i == sv->num_edicts)
 		{
-			RETURN_EDICT(sv.edicts);
+			RETURN_EDICT(sv->edicts);
 			return;
 		}
 		ent = EDICT_NUM(i);
@@ -1273,8 +1273,8 @@ void PF_aim (void)
 	bestdist = sv_aim.value;
 	bestent = NULL;
 	
-	check = NEXT_EDICT(sv.edicts);
-	for (i=1 ; i<sv.num_edicts ; i++, check = NEXT_EDICT(check) )
+	check = NEXT_EDICT(sv->edicts);
+	for (i=1 ; i<sv->num_edicts ; i++, check = NEXT_EDICT(check) )
 	{
 		if (check->v.takedamage != DAMAGE_AIM)
 			continue;
@@ -1380,7 +1380,7 @@ sizebuf_t *WriteDest (void)
 	switch (dest)
 	{
 	case MSG_BROADCAST:
-		return &sv.datagram;
+		return &sv->datagram;
 	
 	case MSG_ONE:
 		ent = PROG_TO_EDICT(pr_global_struct->msg_entity);
@@ -1390,10 +1390,10 @@ sizebuf_t *WriteDest (void)
 		return &svs.clients[entnum-1].message;
 		
 	case MSG_ALL:
-		return &sv.reliable_datagram;
+		return &sv->reliable_datagram;
 	
 	case MSG_INIT:
-		return &sv.signon;
+		return &sv->signon;
 
 	default:
 		PR_RunError ("WriteDest: bad destination");
@@ -1455,17 +1455,17 @@ void PF_makestatic (void)
 	
 	ent = G_EDICT(OFS_PARM0);
 
-	MSG_WriteByte (&sv.signon,svc_spawnstatic);
+	MSG_WriteByte (&sv->signon,svc_spawnstatic);
 
-	MSG_WriteByte (&sv.signon, SV_ModelIndex(pr_strings + ent->v.model));
+	MSG_WriteByte (&sv->signon, SV_ModelIndex(pr_strings + ent->v.model));
 
-	MSG_WriteByte (&sv.signon, ent->v.frame);
-	MSG_WriteByte (&sv.signon, ent->v.colormap);
-	MSG_WriteByte (&sv.signon, ent->v.skin);
+	MSG_WriteByte (&sv->signon, ent->v.frame);
+	MSG_WriteByte (&sv->signon, ent->v.colormap);
+	MSG_WriteByte (&sv->signon, ent->v.skin);
 	for (i=0 ; i<3 ; i++)
 	{
-		MSG_WriteCoord(&sv.signon, ent->v.origin[i]);
-		MSG_WriteAngle(&sv.signon, ent->v.angles[i]);
+		MSG_WriteCoord(&sv->signon, ent->v.origin[i]);
+		MSG_WriteAngle(&sv->signon, ent->v.angles[i]);
 	}
 
 // throw the entity away now

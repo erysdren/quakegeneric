@@ -139,7 +139,6 @@ char *pr_opnames[] =
 char *PR_GlobalString (int ofs);
 char *PR_GlobalStringNoContents (int ofs);
 
-
 //=============================================================================
 
 /*
@@ -150,7 +149,7 @@ PR_PrintStatement
 void PR_PrintStatement (dstatement_t *s)
 {
 	int		i;
-	
+
 	if ( (unsigned)s->op < sizeof(pr_opnames)/sizeof(pr_opnames[0]))
 	{
 		Con_Printf ("%s ",  pr_opnames[s->op]);
@@ -489,7 +488,7 @@ while (1)
 		c->_float = !a->function;
 		break;
 	case OP_NOT_ENT:
-		c->_float = (PROG_TO_EDICT(a->edict) == sv.edicts);
+		c->_float = (PROG_TO_EDICT(a->edict) == sv->edicts);
 		break;
 
 	case OP_EQ_F:
@@ -548,11 +547,11 @@ while (1)
 	case OP_STOREP_FLD:		// integers
 	case OP_STOREP_S:
 	case OP_STOREP_FNC:		// pointers
-		ptr = (eval_t *)((byte *)sv.edicts + b->_int);
+		ptr = (eval_t *)((byte *)sv->edicts + b->_int);
 		ptr->_int = a->_int;
 		break;
 	case OP_STOREP_V:
-		ptr = (eval_t *)((byte *)sv.edicts + b->_int);
+		ptr = (eval_t *)((byte *)sv->edicts + b->_int);
 		ptr->vector[0] = a->vector[0];
 		ptr->vector[1] = a->vector[1];
 		ptr->vector[2] = a->vector[2];
@@ -563,9 +562,9 @@ while (1)
 #ifdef PARANOID
 		NUM_FOR_EDICT(ed);		// make sure it's in range
 #endif
-		if (ed == (edict_t *)sv.edicts && sv.state == ss_active)
+		if (ed == (edict_t *)sv->edicts && sv->state == ss_active)
 			PR_RunError ("assignment to world entity");
-		c->_int = (byte *)((int *)&ed->v + b->_int) - (byte *)sv.edicts;
+		c->_int = (byte *)((int *)&ed->v + b->_int) - (byte *)sv->edicts;
 		break;
 		
 	case OP_LOAD_F:

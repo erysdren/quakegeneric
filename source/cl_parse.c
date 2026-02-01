@@ -151,7 +151,7 @@ void CL_KeepaliveMessage (void)
 	sizebuf_t	old;
 	byte		olddata[8192];
 	
-	if (sv.active)
+	if (sv->active)
 		return;		// no need if server is local
 	if (cls.demoplayback)
 		return;
