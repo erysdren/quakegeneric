@@ -10,8 +10,6 @@ set(CMAKE_C_STANDARD_REQUIRED TRUE)
 add_compile_options(-std=gnu99)
 add_link_options()
 
-add_compile_definitions(-D__64)
-
 # tinycc
 if(CMAKE_C_COMPILER_ID STREQUAL "TinyCC")
 	add_compile_definitions(-DSDL_DISABLE_IMMINTRIN_H=1)
@@ -97,18 +95,3 @@ set(QUAKEGENERIC_SOURCES
 
 # library
 add_library(quakegeneric STATIC ${QUAKEGENERIC_SOURCES})
-
-add_executable(quakeg)
-find_package(SDL2 REQUIRED)
-
-target_sources(quakeg
-	PRIVATE
-		${PROJECT_SOURCE_DIR}/source/quakegeneric_sdl2.c
-)
-
-
-target_link_libraries(quakeg
-	PRIVATE
-		SDL2::SDL2-static
-		quakegeneric
-)
