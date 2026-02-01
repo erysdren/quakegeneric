@@ -306,7 +306,7 @@ void SV_WaterMove (void)
 
 void SV_WaterJump (void)
 {
-	if (sv.time > sv_player->v.teleport_time
+	if (sv->time > sv_player->v.teleport_time
 	|| !sv_player->v.waterlevel)
 	{
 		sv_player->v.flags = (int)sv_player->v.flags & ~FL_WATERJUMP;
@@ -335,7 +335,7 @@ void SV_AirMove (void)
 	smove = cmd.sidemove;
 	
 // hack to not let you back into teleporter
-	if (sv.time < sv_player->v.teleport_time && fmove < 0)
+	if (sv->time < sv_player->v.teleport_time && fmove < 0)
 		fmove = 0;
 		
 	for (i=0 ; i<3 ; i++)
@@ -443,7 +443,7 @@ void SV_ReadClientMove (usercmd_t *move)
 	
 // read ping time
 	host_client->ping_times[host_client->num_pings%NUM_PING_TIMES]
-		= sv.time - MSG_ReadFloat ();
+		= sv->time - MSG_ReadFloat ();
 	host_client->num_pings++;
 
 // read current angles	
@@ -617,7 +617,7 @@ void SV_RunClients (void)
 		}
 
 // always pause in single player if in console or menus
-		if (!sv.paused && (svs.maxclients > 1 || key_dest == key_game) )
+		if (!sv->paused && (svs.maxclients > 1 || key_dest == key_game) )
 			SV_ClientThink ();
 	}
 }

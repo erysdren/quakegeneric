@@ -19,10 +19,38 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "quakedef.h"
+#include <sys/mman.h>
+#include <errno.h>
 
 void QG_Tick(double duration)
 {
 	Host_Frame(duration);
+}
+
+void *QG_Alloc(size_t sz)
+{
+#ifdef __64
+	size_t mmapsize = ((size_t)sz + (65536U - 1)) & ~(65536U - 1);
+	void *ret = mmap(NULL, mmapsize, PROT_READ | PROT_WRITE, MAP_32BIT | MAP_ANON | MAP_PRIVATE, 0, 0);
+	uintptr_t base = 0U;
+	while(ret == MAP_FAILED)
+	{
+		base += 16U * 1024 * 1024;		// start at 16 MiB and try increasing addresses
+		if(base >= 0x100000000U)
+		{
+			// abort
+			return NULL;
+		}
+		ret = mmap((void *)base, mmapsize, PROT_READ | PROT_WRITE, MAP_FIXED | MAP_ANON | MAP_PRIVATE, 0, 0);
+	}
+	if(ret == MAP_FAILED)
+	{
+		return NULL;
+	}
+	return ret;
+#else
+	return malloc(sz);
+#endif
 }
 
 void QG_Create(int argc, char *argv[])
@@ -30,7 +58,10 @@ void QG_Create(int argc, char *argv[])
 	static quakeparms_t    parms;
 
 	parms.memsize = 8*1024*1024;
-	parms.membase = malloc (parms.memsize);
+
+	parms.membase = QG_Alloc(parms.memsize);
+	sv = QG_Alloc(sizeof(server_t));
+
 	parms.basedir = ".";
 
 	COM_InitArgv (argc, argv);

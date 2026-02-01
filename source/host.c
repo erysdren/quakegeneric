@@ -93,7 +93,7 @@ void Host_EndGame (char *message, ...)
 	va_end (argptr);
 	Con_DPrintf ("Host_EndGame: %s\n",string);
 	
-	if (sv.active)
+	if (sv->active)
 		Host_ShutdownServer (false);
 
 	if (cls.state == ca_dedicated)
@@ -131,7 +131,7 @@ void Host_Error (char *error, ...)
 	va_end (argptr);
 	Con_Printf ("Host_Error: %s\n",string);
 	
-	if (sv.active)
+	if (sv->active)
 		Host_ShutdownServer (false);
 
 	if (cls.state == ca_dedicated)
@@ -406,10 +406,10 @@ void Host_ShutdownServer(qboolean crash)
 	char		message[4];
 	double	start;
 
-	if (!sv.active)
+	if (!sv->active)
 		return;
 
-	sv.active = false;
+	sv->active = false;
 
 // stop all client sounds immediately
 	if (cls.state == ca_connected)
@@ -479,7 +479,7 @@ void Host_ClearMemory (void)
 		Hunk_FreeToLowMark (host_hunklevel);
 
 	cls.signon = 0;
-	memset (&sv, 0, sizeof(sv));
+	memset (sv, 0, sizeof(*sv));
 	memset (&cl, 0, sizeof(cl));
 }
 
@@ -561,7 +561,7 @@ void Host_ServerFrame (void)
 	
 // move things around and think
 // always pause in single player if in console or menus
-	if (!sv.paused && (svs.maxclients > 1 || key_dest == key_game) )
+	if (!sv->paused && (svs.maxclients > 1 || key_dest == key_game) )
 		SV_Physics ();
 
 // send all messages to the clients
@@ -604,7 +604,7 @@ void _Host_Frame (float time)
 	NET_Poll();
 
 // if running the server locally, make intentions now
-	if (sv.active)
+	if (sv->active)
 		CL_SendCmd ();
 	
 //-------------------
@@ -616,7 +616,7 @@ void _Host_Frame (float time)
 // check for commands typed to the host
 	Host_GetConsoleCommands ();
 	
-	if (sv.active)
+	if (sv->active)
 		Host_ServerFrame ();
 
 //-------------------
@@ -627,7 +627,7 @@ void _Host_Frame (float time)
 
 // if running the server remotely, send intentions now after
 // the incoming messages have been read
-	if (!sv.active)
+	if (!sv->active)
 		CL_SendCmd ();
 
 	host_time += host_frametime;

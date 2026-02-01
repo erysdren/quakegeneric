@@ -122,7 +122,7 @@ void Cvar_Set (char *var_name, char *value)
 	var->value = Q_atof (var->string);
 	if (var->server && changed)
 	{
-		if (sv.active)
+		if (sv->active)
 			SV_BroadcastPrintf ("\"%s\" changed to \"%s\"\n", var->name, var->string);
 	}
 }

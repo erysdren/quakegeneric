@@ -139,7 +139,7 @@ hull_t *SV_HullForEntity (edict_t *ent, vec3_t mins, vec3_t maxs, vec3_t offset)
 		if (ent->v.movetype != MOVETYPE_PUSH)
 			Sys_Error ("SOLID_BSP without MOVETYPE_PUSH");
 
-		model = sv.models[ (int)ent->v.modelindex ];
+		model = sv->models[ (int)ent->v.modelindex ];
 
 		if (!model || model->type != mod_brush)
 			Sys_Error ("MOVETYPE_PUSH with a non bsp model");
@@ -250,7 +250,7 @@ void SV_ClearWorld (void)
 	
 	memset (sv_areanodes, 0, sizeof(sv_areanodes));
 	sv_numareanodes = 0;
-	SV_CreateAreaNode (0, sv.worldmodel->mins, sv.worldmodel->maxs);
+	SV_CreateAreaNode (0, sv->worldmodel->mins, sv->worldmodel->maxs);
 }
 
 
@@ -301,7 +301,7 @@ void SV_TouchLinks ( edict_t *ent, areanode_t *node )
 
 		pr_global_struct->self = EDICT_TO_PROG(touch);
 		pr_global_struct->other = EDICT_TO_PROG(ent);
-		pr_global_struct->time = sv.time;
+		pr_global_struct->time = sv->time;
 		PR_ExecuteProgram (touch->v.touch);
 
 		pr_global_struct->self = old_self;
@@ -343,7 +343,7 @@ void SV_FindTouchedLeafs (edict_t *ent, mnode_t *node)
 			return;
 
 		leaf = (mleaf_t *)node;
-		leafnum = leaf - sv.worldmodel->leafs - 1;
+		leafnum = leaf - sv->worldmodel->leafs - 1;
 
 		ent->leafnums[ent->num_leafs] = leafnum;
 		ent->num_leafs++;			
@@ -376,7 +376,7 @@ void SV_LinkEdict (edict_t *ent, qboolean touch_triggers)
 	if (ent->area.prev)
 		SV_UnlinkEdict (ent);	// unlink from old position
 		
-	if (ent == sv.edicts)
+	if (ent == sv->edicts)
 		return;		// don't add the world
 
 	if (ent->free)
@@ -411,7 +411,7 @@ void SV_LinkEdict (edict_t *ent, qboolean touch_triggers)
 // link to PVS leafs
 	ent->num_leafs = 0;
 	if (ent->v.modelindex)
-		SV_FindTouchedLeafs (ent, sv.worldmodel->nodes);
+		SV_FindTouchedLeafs (ent, sv->worldmodel->nodes);
 
 	if (ent->v.solid == SOLID_NOT)
 		return;
@@ -495,7 +495,7 @@ int SV_PointContents (vec3_t p)
 {
 	int		cont;
 
-	cont = SV_HullPointContents (&sv.worldmodel->hulls[0], 0, p);
+	cont = SV_HullPointContents (&sv->worldmodel->hulls[0], 0, p);
 	if (cont <= CONTENTS_CURRENT_0 && cont >= CONTENTS_CURRENT_DOWN)
 		cont = CONTENTS_WATER;
 	return cont;
@@ -503,7 +503,7 @@ int SV_PointContents (vec3_t p)
 
 int SV_TruePointContents (vec3_t p)
 {
-	return SV_HullPointContents (&sv.worldmodel->hulls[0], 0, p);
+	return SV_HullPointContents (&sv->worldmodel->hulls[0], 0, p);
 }
 
 //===========================================================================
@@ -522,7 +522,7 @@ edict_t	*SV_TestEntityPosition (edict_t *ent)
 	trace = SV_Move (ent->v.origin, ent->v.mins, ent->v.maxs, ent->v.origin, 0, ent);
 	
 	if (trace.startsolid)
-		return sv.edicts;
+		return sv->edicts;
 		
 	return NULL;
 }
@@ -845,7 +845,7 @@ trace_t SV_Move (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int type, e
 	memset ( &clip, 0, sizeof ( moveclip_t ) );
 
 // clip to world
-	clip.trace = SV_ClipMoveToEntity ( sv.edicts, start, mins, maxs, end );
+	clip.trace = SV_ClipMoveToEntity ( sv->edicts, start, mins, maxs, end );
 
 	clip.start = start;
 	clip.end = end;

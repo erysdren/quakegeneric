@@ -89,12 +89,12 @@ edict_t *ED_Alloc (void)
 	int			i;
 	edict_t		*e;
 
-	for ( i=svs.maxclients+1 ; i<sv.num_edicts ; i++)
+	for ( i=svs.maxclients+1 ; i<sv->num_edicts ; i++)
 	{
 		e = EDICT_NUM(i);
 		// the first couple seconds of server time can involve a lot of
 		// freeing and allocating, so relax the replacement policy
-		if (e->free && ( e->freetime < 2 || sv.time - e->freetime > 0.5 ) )
+		if (e->free && ( e->freetime < 2 || sv->time - e->freetime > 0.5 ) )
 		{
 			ED_ClearEdict (e);
 			return e;
@@ -104,7 +104,7 @@ edict_t *ED_Alloc (void)
 	if (i == MAX_EDICTS)
 		Sys_Error ("ED_Alloc: no free edicts");
 		
-	sv.num_edicts++;
+	sv->num_edicts++;
 	e = EDICT_NUM(i);
 	ED_ClearEdict (e);
 
@@ -135,7 +135,7 @@ void ED_Free (edict_t *ed)
 	ed->v.nextthink = -1;
 	ed->v.solid = 0;
 	
-	ed->freetime = sv.time;
+	ed->freetime = sv->time;
 }
 
 //===========================================================================
@@ -538,8 +538,8 @@ void ED_PrintEdicts (void)
 {
 	int		i;
 	
-	Con_Printf ("%i entities\n", sv.num_edicts);
-	for (i=0 ; i<sv.num_edicts ; i++)
+	Con_Printf ("%i entities\n", sv->num_edicts);
+	for (i=0 ; i<sv->num_edicts ; i++)
 		ED_PrintNum (i);
 }
 
@@ -555,7 +555,7 @@ void ED_PrintEdict_f (void)
 	int		i;
 	
 	i = Q_atoi (Cmd_Argv(1));
-	if (i >= sv.num_edicts)
+	if (i >= sv->num_edicts)
 	{
 		Con_Printf("Bad edict number\n");
 		return;
@@ -577,7 +577,7 @@ void ED_Count (void)
 	int		active, models, solid, step;
 
 	active = models = solid = step = 0;
-	for (i=0 ; i<sv.num_edicts ; i++)
+	for (i=0 ; i<sv->num_edicts ; i++)
 	{
 		ent = EDICT_NUM(i);
 		if (ent->free)
@@ -591,7 +591,7 @@ void ED_Count (void)
 			step++;
 	}
 
-	Con_Printf ("num_edicts:%3i\n", sv.num_edicts);
+	Con_Printf ("num_edicts:%3i\n", sv->num_edicts);
 	Con_Printf ("active    :%3i\n", active);
 	Con_Printf ("view      :%3i\n", models);
 	Con_Printf ("touch     :%3i\n", solid);
@@ -810,7 +810,7 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 	init = false;
 
 // clear it
-	if (ent != sv.edicts)	// hack
+	if (ent != sv->edicts)	// hack
 		memset (&ent->v, 0, progs->entityfields * 4);
 
 // go through all the dictionary pairs
@@ -910,7 +910,7 @@ void ED_LoadFromFile (char *data)
 	
 	ent = NULL;
 	inhibit = 0;
-	pr_global_struct->time = sv.time;
+	pr_global_struct->time = sv->time;
 	
 // parse ents
 	while (1)
@@ -1088,19 +1088,19 @@ void PR_Init (void)
 
 edict_t *EDICT_NUM(int n)
 {
-	if (n < 0 || n >= sv.max_edicts)
+	if (n < 0 || n >= sv->max_edicts)
 		Sys_Error ("EDICT_NUM: bad number %i", n);
-	return (edict_t *)((byte *)sv.edicts+ (n)*pr_edict_size);
+	return (edict_t *)((byte *)sv->edicts+ (n)*pr_edict_size);
 }
 
 int NUM_FOR_EDICT(edict_t *e)
 {
 	int		b;
 	
-	b = (byte *)e - (byte *)sv.edicts;
+	b = (byte *)e - (byte *)sv->edicts;
 	b = b / pr_edict_size;
 	
-	if (b < 0 || b >= sv.num_edicts)
+	if (b < 0 || b >= sv->num_edicts)
 		Sys_Error ("NUM_FOR_EDICT: bad pointer");
 	return b;
 }

@@ -63,7 +63,7 @@ void CL_ClearState (void)
 {
 	int			i;
 
-	if (!sv.active)
+	if (!sv->active)
 		Host_ClearMemory ();
 
 // wipe the entire cl structure
@@ -120,7 +120,7 @@ void CL_Disconnect (void)
 		NET_Close (cls.netcon);
 
 		cls.state = ca_disconnected;
-		if (sv.active)
+		if (sv->active)
 			Host_ShutdownServer(false);
 	}
 
@@ -131,7 +131,7 @@ void CL_Disconnect (void)
 void CL_Disconnect_f (void)
 {
 	CL_Disconnect ();
-	if (sv.active)
+	if (sv->active)
 		Host_ShutdownServer (false);
 }
 
@@ -394,7 +394,7 @@ float	CL_LerpPoint (void)
 
 	f = cl.mtime[0] - cl.mtime[1];
 	
-	if (!f || cl_nolerp.value || cls.timedemo || sv.active)
+	if (!f || cl_nolerp.value || cls.timedemo || sv->active)
 	{
 		cl.time = cl.mtime[0];
 		return 1;
