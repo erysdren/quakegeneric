@@ -2,7 +2,7 @@
 # project
 cmake_minimum_required(VERSION 3.3)
 project(quakegeneric DESCRIPTION "portable quake" HOMEPAGE_URL https://github.com/erysdren/quakegeneric LANGUAGES C VERSION 1.0.9)
-#set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED TRUE)
 
