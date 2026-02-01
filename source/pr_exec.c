@@ -565,10 +565,10 @@ while (1)
 		if (ed == (edict_t *)sv->edicts && sv->state == ss_active)
 			PR_RunError ("assignment to world entity");
 		c->_int = (byte *)((int *)&ed->v + b->_int) - (byte *)sv->edicts;
-		if(c->_int > 65535 || c->_int < 0)
+		if(c->_int > 16*1024*1024 || c->_int < 0)
 		{
 			// this is an error
-			printf("error OP_ADDRESS here\n");
+			printf("error OP_ADDRESS here %d\n", c->_int);
 		}
 		break;
 		

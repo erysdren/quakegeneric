@@ -53,6 +53,9 @@ void *QG_Alloc(size_t sz)
 #endif
 }
 
+#define	MAX_MOD_KNOWN	256
+extern model_t	*mod_known;
+
 void QG_Create(int argc, char *argv[])
 {
 	static quakeparms_t    parms;
@@ -61,6 +64,7 @@ void QG_Create(int argc, char *argv[])
 
 	parms.membase = QG_Alloc(parms.memsize);
 	sv = QG_Alloc(sizeof(server_t));
+	mod_known = QG_Alloc(MAX_MOD_KNOWN * sizeof(model_t));
 
 	parms.basedir = ".";
 
